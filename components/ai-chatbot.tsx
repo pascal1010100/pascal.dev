@@ -1,13 +1,21 @@
-import { MessageCircle } from "lucide-react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 
 export default function AiChatbot() {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    // Este código se ejecuta solo en el cliente
+    console.log("Chatbot cargado en cliente");
+  }, []);
+
   return (
     <button
-      className="fixed bottom-4 right-4 z-50 bg-primary text-white rounded-full p-4 shadow-lg hover:bg-primary/90 transition"
-      aria-label="Abrir chatbot"
-      // onClick={...} // Aquí puedes abrir un modal/chat real
+      onClick={() => setOpen(!open)}
+      className="bg-black text-white px-4 py-2 rounded-lg shadow-lg"
     >
-      <MessageCircle className="h-6 w-6" />
+      {open ? "Cerrar Chatbot" : "Abrir Chatbot"}
     </button>
   );
-} 
+}
