@@ -16,7 +16,8 @@ const posts: Post[] = [
   {
     slug: "como-monetizar-con-ia",
     title: "Cómo monetizar con IA en 2025",
-    excerpt: "Descubre las mejores técnicas para ganar dinero con inteligencia artificial en el mundo digital actual...",
+    excerpt:
+      "Descubre las mejores técnicas para ganar dinero con inteligencia artificial en el mundo digital actual...",
     author: "José Martínez",
     date: "2025-07-10",
     image: "/images/monetizar-ia.jpg",
@@ -24,7 +25,8 @@ const posts: Post[] = [
   {
     slug: "vida-nomada-digital",
     title: "Vida Nómada Digital: Trabaja desde cualquier lugar",
-    excerpt: "Consejos y herramientas para mantener tu trabajo en remoto sin importar dónde estés...",
+    excerpt:
+      "Consejos y herramientas para mantener tu trabajo en remoto sin importar dónde estés...",
     author: "Ana López",
     date: "2025-06-25",
     image: "/images/nomada-digital.jpg",
@@ -32,14 +34,15 @@ const posts: Post[] = [
   {
     slug: "marketing-de-afiliados-exitoso",
     title: "Marketing de Afiliados: Estrategias para el éxito",
-    excerpt: "Aprende cómo construir ingresos pasivos con técnicas de marketing de afiliados efectivas y comprobadas.",
+    excerpt:
+      "Aprende cómo construir ingresos pasivos con técnicas de marketing de afiliados efectivas y comprobadas.",
     author: "Carlos Pérez",
     date: "2025-07-05",
     image: "/images/marketing-afiliados.jpg",
   },
 ];
 
-export default function BlogPage() {
+export default function BlogClient() {
   return (
     <main className="max-w-7xl mx-auto px-6 py-20">
       <h1 className="text-5xl font-extrabold text-center mb-16 text-primary">
@@ -70,7 +73,7 @@ export default function BlogPage() {
               <p className="text-gray-600 dark:text-gray-300 flex-grow">{excerpt}</p>
               <div className="mt-6 flex justify-between items-center text-sm text-gray-400 dark:text-gray-500 font-medium">
                 <time dateTime={date}>
-                  {new Date(date).toLocaleDateString("es-ES", {
+                  {new Date(date).toLocaleDateString(undefined, {
                     year: "numeric",
                     month: "long",
                     day: "numeric",

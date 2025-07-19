@@ -1,7 +1,5 @@
-"use client";
+import BlogClientWrapper from "./BlogClientWrapper";
 
-import BlogPage from "@/components/BlogClient";
-
-export default function BlogRoutePage() {
-  return <BlogPage />;
+export default function BlogPage() {
+  return <BlogClientWrapper />;
 }
