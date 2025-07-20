@@ -15,7 +15,7 @@ export default function Home() {
 
       <section className="py-20 px-6 bg-muted/50">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold mb-12 text-center">Artículos Destacados</h2>
+          
           <FeaturedPosts />
         </div>
       </section>
