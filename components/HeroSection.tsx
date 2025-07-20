@@ -5,7 +5,13 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import HeroBackground from "./HeroBackground";
+import dynamic from "next/dynamic";
+
+// ✅ Importa HeroBackground dinámicamente con SSR desactivado
+const HeroBackground = dynamic(() => import("./HeroBackground"), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0 bg-black" />,
+});
 
 export default function HeroSection() {
   return (
