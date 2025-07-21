@@ -5,7 +5,12 @@ import { estrategias } from "@/data/estrategias";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
-export default function EstrategiaDetallePage({ params }: { params: { slug: string } }) {
+// ✅ Tipo correcto para Next.js App Router
+export default function EstrategiaDetallePage({
+  params,
+}: {
+  params: { slug: string };
+}) {
   const estrategia = estrategias.find((item) => item.slug === params.slug);
 
   if (!estrategia) return notFound();
