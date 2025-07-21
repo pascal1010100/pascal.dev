@@ -1,21 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
+import { estrategias as strategies } from "@/data/estrategias";
 
-type Strategy = {
-  slug: string;
-  title: string;
-  description: string;
-  image: string;
-};
-
-export default async function EstrategiasPage() {
-  const res = await fetch('http://localhost:3000/api/estrategias', {
-    next: { revalidate: 60 }
-  });
-
-  const strategies: Strategy[] = await res.json();
-
+export default function EstrategiasPage() {
   return (
     <main className="min-h-screen px-6 py-20 bg-background">
       <section className="max-w-7xl mx-auto text-center">
@@ -25,8 +13,8 @@ export default async function EstrategiasPage() {
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {strategies.map((strategy, index) => (
-            <Link href={`/estrategias/${strategy.slug}`} key={index}>
+          {strategies.map((strategy) => (
+            <Link href={`/estrategias/${strategy.slug}`} key={strategy.slug}>
               <Card className="hover:shadow-xl transition-shadow duration-300 cursor-pointer">
                 <Image
                   src={strategy.image}

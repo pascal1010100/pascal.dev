@@ -1,17 +1,15 @@
 export const estrategias = [
   {
-    id: 1,
-    titulo: "Automatización con IA",
-    descripcion: "Usa herramientas como ChatGPT y Zapier para automatizar tu negocio.",
+    slug: "blog-automatizado-ia",
+    title: "Crea un Blog Automatizado con IA",
+    description: "Utiliza herramientas como ChatGPT y Notion AI para generar contenido optimizado automáticamente. Monetiza con afiliados, ads o cursos.",
+    image: "/images/estrategias/blog-ia.jpg",
   },
   {
-    id: 2,
-    titulo: "Productos Digitales",
-    descripcion: "Crea y vende ebooks, cursos o plantillas usando plataformas digitales.",
+    slug: "productos-digitales-ai",
+    title: "Vende Productos Digitales con AI",
+    description: "Diseña ebooks, plantillas o música usando IA generativa como Midjourney o DALL·E. Vende en Gumroad o tu sitio.",
+    image: "/images/estrategias/productos-digitales.jpg",
   },
-  {
-    id: 3,
-    titulo: "Afiliados Inteligentes",
-    descripcion: "Promociona productos de terceros con IA para aumentar tus ingresos.",
-  },
+  // Agrega más estrategias aquí si quieres
 ];
