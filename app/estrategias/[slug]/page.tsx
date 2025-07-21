@@ -5,13 +5,7 @@ import { estrategias } from "@/data/estrategias";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
-interface Props {
-  params: {
-    slug: string;
-  };
-}
-
-export default function EstrategiaDetallePage({ params }: Props) {
+export default function EstrategiaDetallePage({ params }: { params: { slug: string } }) {
   const estrategia = estrategias.find((item) => item.slug === params.slug);
 
   if (!estrategia) return notFound();
