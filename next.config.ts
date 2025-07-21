@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone', // necesario para Vercel y hosting optimizado
+  output: 'standalone',
   reactStrictMode: true,
   experimental: {
-    serverActions: true,
+    serverActions: {}, // ← CORREGIDO AQUÍ
   },
   images: {
     domains: ['images.unsplash.com', 'cdn.sanity.io'],
