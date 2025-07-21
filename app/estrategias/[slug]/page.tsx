@@ -19,7 +19,9 @@ export default async function Page({
           <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight mb-2">
             {estrategia.title}
           </h1>
-          <p className="text-muted-foreground text-base mb-1">Por <span className="font-medium">Pascal Espíritu</span> — Julio 2025</p>
+          <p className="text-muted-foreground text-base mb-1">
+            Por <span className="font-medium">Pascal Espíritu</span> — Julio 2025
+          </p>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
             {estrategia.description}
           </p>
@@ -44,12 +46,16 @@ export default async function Page({
         </div>
 
         <div className="prose prose-neutral dark:prose-invert max-w-none text-lg leading-relaxed">
-          <h2 className="text-2xl font-semibold mt-8">¿Qué significa tener un blog automatizado?</h2>
+          <h2 className="text-2xl font-semibold mt-8">
+            ¿Qué significa tener un blog automatizado?
+          </h2>
           <p>
             Un blog automatizado con IA significa tener una máquina de contenido que trabaja para ti 24/7. Genera artículos, programa publicaciones y hasta posiciona en buscadores sin que tengas que escribir una sola línea cada día.
           </p>
 
-          <h2 className="text-2xl font-semibold mt-10">Paso a paso para crear tu blog con IA</h2>
+          <h2 className="text-2xl font-semibold mt-10">
+            Paso a paso para crear tu blog con IA
+          </h2>
           <ol className="list-decimal list-inside space-y-2">
             <li><strong>Elige tu nicho</strong>: educación, salud, tecnología, etc.</li>
             <li><strong>Genera contenido con ChatGPT</strong>: crea artículos, guías y títulos atractivos.</li>
@@ -75,7 +81,7 @@ export default async function Page({
           </p>
 
           <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground">
-            Un blog con IA no es el futuro. Es el presente que todavía no todos están usando.
+           Un blog con IA no es el futuro. Es el presente que todavía no todos están usando.
           </blockquote>
 
           <div className="flex flex-wrap gap-2 mt-10">
