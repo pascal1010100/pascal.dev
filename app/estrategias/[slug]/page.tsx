@@ -3,12 +3,17 @@ import { estrategias } from "@/data/estrategias";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
-export default function Page({ params }: { params: { slug: string } }) {
+type Props = {
+  params: {
+    slug: string;
+  };
+};
 
-
+export default async function Page({ params }: Props) {
   const estrategia = estrategias.find((item) => item.slug === params.slug);
 
   if (!estrategia) return notFound();
+
 
   return (
     <main className="min-h-screen px-4 sm:px-6 py-10 sm:py-16 bg-background text-foreground">
