@@ -4,8 +4,9 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
 // ✅ Tipado inline directo y sin tipo externo
-export default function Page({ params }: { params: { slug: string } }) {
-  const estrategia = estrategias.find((item) => item.slug === params.slug);
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params; // ✅ Ahora entiende que viene como promesa
+  const estrategia = estrategias.find((item) => item.slug === slug);
 
   if (!estrategia) return notFound();
 
