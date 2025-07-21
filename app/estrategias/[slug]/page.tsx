@@ -3,14 +3,13 @@ import { estrategias } from "@/data/estrategias";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
-// Declaramos tipo explícito para evitar errores de tipos con Next.js 15
-interface Props {
+type PageProps = {
   params: {
     slug: string;
   };
-}
+};
 
-export default function Page({ params }: Props) {
+export default function Page({ params }: PageProps) {
   const estrategia = estrategias.find((item) => item.slug === params.slug);
 
   if (!estrategia) return notFound();
