@@ -3,11 +3,8 @@ import { estrategias } from "@/data/estrategias";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
-type PageProps = {
-  params: { slug: string };
-};
+export default function Page({ params }: { params: { slug: string } }) {
 
-export default function Page({ params }: PageProps) {
 
   const estrategia = estrategias.find((item) => item.slug === params.slug);
 
