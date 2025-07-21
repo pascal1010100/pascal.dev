@@ -1,12 +1,9 @@
-"use client";
-
 import { notFound } from "next/navigation";
 import { estrategias } from "@/data/estrategias";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
-// ✅ Tipo correcto para Next.js App Router
-export default function EstrategiaDetallePage({
+export default async function Page({
   params,
 }: {
   params: { slug: string };
@@ -22,9 +19,7 @@ export default function EstrategiaDetallePage({
           <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight mb-2">
             {estrategia.title}
           </h1>
-          <p className="text-muted-foreground text-base mb-1">
-            Por <span className="font-medium">Pascal Espíritu</span> — Julio 2025
-          </p>
+          <p className="text-muted-foreground text-base mb-1">Por <span className="font-medium">Pascal Espíritu</span> — Julio 2025</p>
           <p className="text-muted-foreground text-lg max-w-xl mx-auto">
             {estrategia.description}
           </p>
