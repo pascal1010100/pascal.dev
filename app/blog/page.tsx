@@ -23,7 +23,7 @@ export default function BlogPage() {
         {/* Artículo 1 */}
         <article className="bg-card rounded-xl shadow hover:shadow-xl transition duration-300 overflow-hidden">
           <img
-            src="/images/blog/blog-ejemplo.jpg"
+            src="/images/blog/vision-ia-oculta.jpg"
             alt="Blog IA"
             className="w-full h-48 object-cover"
           />
