@@ -2,22 +2,15 @@ import { notFound } from "next/navigation";
 import { estrategias } from "@/data/estrategias";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import type { Metadata } from "next";
 
-// ✅ Esta es la corrección importante: props tipado dinámico
-type Props = {
-  params: { slug: string };
-};
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const estrategia = estrategias.find((item) => item.slug === params.slug);
-  return {
-    title: estrategia?.title || "Estrategia no encontrada",
-    description: estrategia?.description,
+// Declaramos tipo explícito para evitar errores de tipos con Next.js 15
+interface Props {
+  params: {
+    slug: string;
   };
 }
 
-export default async function Page({ params }: Props) {
+export default function Page({ params }: Props) {
   const estrategia = estrategias.find((item) => item.slug === params.slug);
 
   if (!estrategia) return notFound();
@@ -56,7 +49,35 @@ export default async function Page({ params }: Props) {
         </div>
 
         <div className="prose prose-neutral dark:prose-invert max-w-none text-lg leading-relaxed">
-          {/* ... (contenido del artículo completo como ya está) ... */}
+          <h2 className="text-2xl font-semibold mt-8">¿Qué significa tener un blog automatizado?</h2>
+          <p>
+            Un blog automatizado con IA significa tener una máquina de contenido que trabaja para ti 24/7. Genera artículos, programa publicaciones y hasta posiciona en buscadores sin que tengas que escribir una sola línea cada día.
+          </p>
+
+          <h2 className="text-2xl font-semibold mt-10">Paso a paso para crear tu blog con IA</h2>
+          <ol className="list-decimal list-inside space-y-2">
+            <li><strong>Elige tu nicho</strong>: educación, salud, tecnología, etc.</li>
+            <li><strong>Genera contenido con ChatGPT</strong>: crea artículos, guías y títulos atractivos.</li>
+            <li><strong>Organiza todo en Notion AI</strong>: estructura ideas, categorías y calendario.</li>
+            <li><strong>Publica automáticamente</strong>: con Zapier, Substack o Notion-to-Blog.</li>
+          </ol>
+
+          {/* Anuncio medio contenido */}
+          <div className="w-full max-w-3xl mx-auto my-8">
+            <div className="bg-gray-100 dark:bg-gray-800 text-center py-4 rounded-xl text-sm text-muted-foreground">
+              Publicidad relacionada (468x60)
+            </div>
+          </div>
+
+          <h2 className="text-2xl font-semibold mt-10">Monetiza desde el primer mes</h2>
+          <p>
+            Agrega enlaces de afiliados, publicidad contextual (como Google AdSense) o promociona tus propios productos digitales. Incluso puedes convertir tu blog en un boletín pago con plataformas como Beehiiv.
+          </p>
+
+          <h2 className="text-2xl font-semibold mt-10">Lo que nadie te dice</h2>
+          <p>
+            El verdadero valor de un blog automatizado no es solo el dinero, sino el tiempo libre que te da para crear, viajar o simplemente descansar. Empiezas escribiendo para vivir, y terminas dejando que el blog escriba por ti.
+          </p>
 
           <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground">
             Un blog con IA no es el futuro. Es el presente que todavía no todos están usando.
