@@ -4,15 +4,11 @@ import { notFound } from "next/navigation";
 import { blogPosts } from "@/data/blog";
 import Image from "next/image";
 
+// ⛏️ Solución adaptada para Next.js 15
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
 
-type BlogPostPageProps = {
-  params: {
-    slug: string;
-  };
-};
-
-export default function BlogPostPage({ params }: BlogPostPageProps) {
-  const post = blogPosts.find((p) => p.slug === params.slug);
+  const post = blogPosts.find((p) => p.slug === slug);
   if (!post) return notFound();
 
   return (
