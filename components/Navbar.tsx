@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Sun, Moon, Search } from "lucide-react";
+import { Box } from "lucide-react";
+
+
+
 
 export default function Navbar() {
   const [search, setSearch] = useState("");
@@ -37,9 +41,10 @@ export default function Navbar() {
 
   return (
     <header className="w-full flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-black sticky top-0 z-50">
-      <Link href="/" className="text-2xl font-bold text-gray-900 dark:text-white">
-        pascal.dev
-      </Link>
+     <Link href="/" className="flex items-center gap-2 text-gray-900 dark:text-white">
+  <span className="hidden md:inline text-2xl font-bold">pascal.dev</span>
+  <Box className="md:hidden w-6 h-6" />
+</Link>
 
       {/* Searchbar: visible en md+ */}
       <form
