@@ -4,9 +4,16 @@ import { notFound } from "next/navigation";
 import { blogPosts } from "@/data/blog";
 import Image from "next/image";
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
-  const post = blogPosts.find((p) => p.slug === slug);
+// ✅ para rutas dinámicas en Next 13–15 con App Router
+type Props = {
+  params: {
+    slug: string;
+  };
+};
+
+export default function BlogPostPage({ params }: Props) {
+  const post = blogPosts.find((p) => p.slug === params.slug);
+
   if (!post) return notFound();
 
   return (
