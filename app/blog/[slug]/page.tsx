@@ -5,8 +5,8 @@ import { blogPosts } from "@/data/blog";
 import Image from "next/image";
 
 // ⛏️ Solución adaptada para Next.js 15
-export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
 
   const post = blogPosts.find((p) => p.slug === slug);
   if (!post) return notFound();
