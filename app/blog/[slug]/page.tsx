@@ -2,13 +2,13 @@ import { notFound } from "next/navigation";
 import { blogPosts } from "@/data/blog";
 import Image from "next/image";
 
-interface PageProps {
+interface BlogPostPageProps {
   params: {
     slug: string;
   };
 }
 
-export default function BlogPostPage({ params }: PageProps) {
+export default function BlogPostPage({ params }: BlogPostPageProps) {
   const post = blogPosts.find((p) => p.slug === params.slug);
 
   if (!post) return notFound();
