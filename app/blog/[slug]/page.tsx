@@ -6,10 +6,9 @@ import Image from "next/image";
 
 // ✅ para rutas dinámicas en Next 13–15 con App Router
 type Props = {
-  params: {
-    slug: string;
-  };
+  params: { slug: string };
 };
+
 
 export default function BlogPostPage({ params }: Props) {
   const post = blogPosts.find((p) => p.slug === params.slug);
