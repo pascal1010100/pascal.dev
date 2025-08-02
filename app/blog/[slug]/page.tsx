@@ -1,5 +1,3 @@
-
-
 import { notFound } from "next/navigation";
 import { blogPosts } from "@/data/blog";
 import Image from "next/image";
@@ -9,8 +7,7 @@ type Props = {
   params: { slug: string };
 };
 
-
-export default function BlogPostPage({ params }: Props) {
+export default async function BlogPostPage({ params }: Props) {
   const post = blogPosts.find((p) => p.slug === params.slug);
 
   if (!post) return notFound();
