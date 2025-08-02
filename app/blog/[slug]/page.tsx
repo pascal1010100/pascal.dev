@@ -1,17 +1,15 @@
-'use client';
-
 import { notFound } from "next/navigation";
 import { blogPosts } from "@/data/blog";
 import Image from "next/image";
 
-type Params = {
-  slug: string;
-};
+interface PageProps {
+  params: {
+    slug: string;
+  };
+}
 
-export default function BlogPostPage(props: { params: unknown }) {
-  const { slug } = (props.params as Params); // 👈 Cast explícito
-
-  const post = blogPosts.find((p) => p.slug === slug);
+export default function BlogPostPage({ params }: PageProps) {
+  const post = blogPosts.find((p) => p.slug === params.slug);
 
   if (!post) return notFound();
 
