@@ -1,4 +1,5 @@
 import { blogPosts } from "@/data/blog";
+import Image from "next/image";
 
 export default function BlogPage() {
   return (
@@ -22,11 +23,14 @@ export default function BlogPage() {
             key={post.slug}
             className="bg-card rounded-xl shadow hover:shadow-xl transition duration-300 overflow-hidden"
           >
-            <img
-              src={post.image}
-              alt={post.title}
-              className="w-full h-48 object-cover"
-            />
+            <div className="relative w-full h-48">
+              <Image
+                src={post.image}
+                alt={post.title}
+                fill
+                className="object-cover"
+              />
+            </div>
             <div className="p-5">
               <h2 className="text-xl font-bold mb-2">{post.title}</h2>
               <p className="text-muted-foreground text-sm mb-4">
