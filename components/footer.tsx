@@ -1,10 +1,9 @@
 "use client";
 
-import { Mail, Github, Twitter, Linkedin, Send, ArrowUpRight, Box, Search, MessageSquare, FileText, Code, Zap, ChevronRight } from "lucide-react";
+import { Mail, Github, Twitter, Linkedin, Send, Box, Search, MessageSquare, FileText, Code, Zap, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { TrustBadges } from "@/components/ui/trust-badges";
 import { cn } from "@/lib/utils";
 

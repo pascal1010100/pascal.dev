@@ -44,7 +44,7 @@ const OceanBackground = ({ className = '' }: { className?: string }) => {
       p5.resizeCanvas(parent.offsetWidth, parent.offsetHeight);
     };
     
-    const canvas = p5.createCanvas(
+    p5.createCanvas(
       (canvasParentRef as HTMLElement).offsetWidth,
       (canvasParentRef as HTMLElement).offsetHeight,
       p5.WEBGL

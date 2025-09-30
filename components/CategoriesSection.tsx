@@ -12,8 +12,11 @@ const container = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
+    y: 0,
     transition: {
-      staggerChildren: 0.1,
+      type: "spring" as const,
+      stiffness: 100,
+      damping: 20,
       delayChildren: 0.2,
     },
   },
@@ -24,11 +27,7 @@ const item = {
   show: { 
     opacity: 1, 
     y: 0,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 15,
-    },
+    transition: { duration: 0.5 }
   },
   hover: {
     y: -5,
@@ -172,7 +171,7 @@ export default function CategoriesSection() {
           viewport={{ once: true, margin: "-100px" }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
         >
-          {categories.map((category, index) => (
+          {categories.map((category) => (
             <CategoryCard key={category.title} {...category} />
           ))}
         </motion.div>
