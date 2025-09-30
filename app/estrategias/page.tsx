@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
 import { estrategias } from "@/data/estrategias";
 import { 
@@ -51,18 +51,10 @@ export default function EstrategiasPage() {
     setSearchTerm(term);
   };
 
-  const handleClearSearch = () => {
-    setSearchTerm('');
-  };
-
-  // Get unique categories
-  const categories = useMemo(() => {
-    return [...new Set(estrategias.map(e => e.category))].filter(Boolean) as string[];
-  }, []);
+  const categories = Array.from(new Set(estrategias.map(e => e.category).filter(Boolean))) as string[];
 
   // Handle component mount
   useEffect(() => {
-    setIsMounted(true);
     return () => setIsMounted(false);
   }, []);
 

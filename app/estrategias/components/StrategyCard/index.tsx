@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Zap, DollarSign, Clock, CheckCircle, BookOpen, Bot, ShoppingCart, BarChart2, Star, TrendingUp, Users, Code, Settings, FileText, BarChart, MessageSquare } from 'lucide-react';
+import { ArrowRight, Zap, DollarSign, Clock, CheckCircle, BookOpen, ShoppingCart, Star, TrendingUp, Settings, FileText } from 'lucide-react';
 import { Estrategia, DifficultyInfo } from '../../types/estrategia';
 
 // Mapeo de categorías a iconos y colores
