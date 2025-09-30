@@ -93,7 +93,12 @@ function AuthorBio() {
   );
 }
 
-export default async function Page({ params }: { params: { slug: string } }) {
+// Usar una interfaz explícita para los parámetros
+interface Params {
+  slug: string;
+}
+
+export default async function Page({ params }: { params: Params }) {
   const { slug } = params;
   const estrategia = estrategias.find((item) => item.slug === slug);
 
