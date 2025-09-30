@@ -93,7 +93,6 @@ function AuthorBio() {
   );
 }
 
-// @ts-ignore - Ignorar temporalmente el error de tipo
 export default async function Page({ params }: { params: { slug: string } }) {
   const { slug } = params;
   const estrategia = estrategias.find((item) => item.slug === slug);
