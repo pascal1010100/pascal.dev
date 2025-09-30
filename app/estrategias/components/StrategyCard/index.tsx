@@ -4,7 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/componen
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Zap, DollarSign, Clock, CheckCircle, BookOpen, ShoppingCart, Star, TrendingUp, Settings, FileText } from 'lucide-react';
-import { Estrategia, DifficultyInfo } from '../../types/estrategia';
+import { Estrategia } from '../../types/estrategia';
 
 // Mapeo de categorías a iconos y colores
 const categoryIcons: Record<string, { icon: React.ReactNode; color: string }> = {
@@ -37,12 +37,6 @@ const renderDifficultyStars = (level: string) => {
     </div>
   );
 };
-
-const difficultyLevels: DifficultyInfo[] = [
-  { level: 'Principiante', color: 'bg-green-500', label: 'Principiante' },
-  { level: 'Intermedio', color: 'bg-yellow-500', label: 'Intermedio' },
-  { level: 'Avanzado', color: 'bg-red-500', label: 'Avanzado' }
-] as const;
 
 interface StrategyCardProps {
   estrategia: Estrategia;
