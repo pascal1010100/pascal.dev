@@ -93,11 +93,11 @@ function AuthorBio() {
   );
 }
 
-export default async function Page({ 
-  params 
-}: { 
-  params: { slug: string } 
-}) {
+type PageParams = {
+  slug: string;
+};
+
+export default async function Page({ params }: { params: PageParams }) {
   const { slug } = params;
   const estrategia = estrategias.find((item) => item.slug === slug);
 
