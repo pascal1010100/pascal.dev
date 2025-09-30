@@ -5,10 +5,26 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Share2, Clock, BookOpen, ArrowRight, MessageSquare, Tag } from "lucide-react";
+import { Share2, Clock, BookOpen, ArrowRight, MessageSquare, Tag, Zap, CheckCircle, Settings, TrendingUp, DollarSign } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+
+// Mapeo de categorías a colores
+const categoryColors: Record<string, string> = {
+  'Automatización': 'bg-blue-100 text-blue-800',
+  'Productos Digitales': 'bg-purple-100 text-purple-800',
+  'Educación': 'bg-green-100 text-green-800',
+  'E-commerce': 'bg-yellow-100 text-yellow-800',
+  'default': 'bg-gray-100 text-gray-800'
+};
+
+// Mapeo de dificultad a colores
+const difficultyColors: Record<string, string> = {
+  'Principiante': 'bg-green-100 text-green-800',
+  'Intermedio': 'bg-yellow-100 text-yellow-800',
+  'Avanzado': 'bg-red-100 text-red-800'
+};
 
 // Componente para la tabla de contenidos
 function TableOfContents({ sections }: { sections: { id: string; title: string }[] }) {
@@ -77,32 +93,29 @@ function AuthorBio() {
   );
 }
 
-export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function Page({ params }: { params: { slug: string } }) {
+  const { slug } = params;
   const estrategia = estrategias.find((item) => item.slug === slug);
 
   if (!estrategia) return notFound();
 
   const sections = [
     { id: 'introduccion', title: 'Introducción' },
-    { id: 'beneficios', title: 'Beneficios Clave' },
-    { id: 'implementacion', title: 'Cómo Implementarlo' },
+    { id: 'caracteristicas', title: 'Características Clave' },
     { id: 'herramientas', title: 'Herramientas Recomendadas' },
-    { id: 'conclusion', title: 'Conclusión' },
+    { id: 'ingresos', title: 'Potencial de Ingresos' },
+    { id: 'implementacion', title: 'Cómo Empezar' },
   ];
 
-  const relatedResources = [
-    {
-      title: 'Guía Completa de Marketing de Contenidos',
-      description: 'Aprende a crear una estrategia de contenido efectiva que genere tráfico y conversiones.',
-      href: '/recursos/guia-marketing-contenidos'
-    },
-    {
-      title: 'Plantilla de Calendario Editorial',
-      description: 'Descarga nuestra plantilla gratuita para planificar y organizar tu contenido.',
-      href: '/recursos/plantilla-calendario-editorial'
-    },
-  ];
+  // Generar recursos relacionados basados en la categoría
+  const relatedResources = estrategias
+    .filter(e => e.slug !== slug && e.category === estrategia.category)
+    .slice(0, 2)
+    .map(e => ({
+      title: e.title,
+      description: e.description,
+      href: `/estrategias/${e.slug}`
+    }));
 
   return (
     <div className="min-h-screen bg-background">
@@ -110,9 +123,22 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       <section className="relative pt-24 pb-16 px-4 sm:px-6 bg-gradient-to-b from-primary/5 to-background">
         <div className="max-w-5xl mx-auto">
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-primary/10 text-sm font-medium text-primary">
-              <Tag className="h-4 w-4" />
-              {estrategia.category || 'Estrategia Digital'}
+            <div className="flex flex-wrap justify-center gap-2 mb-4">
+              <span className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium ${categoryColors[estrategia.category || 'default']}`}>
+                <Tag className="h-4 w-4" />
+                {estrategia.category || 'Estrategia Digital'}
+              </span>
+              {estrategia.difficulty && (
+                <span className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium ${difficultyColors[estrategia.difficulty] || difficultyColors['Principiante']}`}>
+                  {estrategia.difficulty}
+                </span>
+              )}
+              {estrategia.pricingStrategy && (
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                  <DollarSign className="h-4 w-4" />
+                  {estrategia.pricingStrategy.model}
+                </span>
+              )}
             </div>
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 leading-tight">
               {estrategia.title}
@@ -161,43 +187,136 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
               {/* Introducción */}
               <section id="introduccion" className="scroll-mt-24">
                 <h2 className="text-3xl font-bold mt-12 mb-6 pb-2 border-b border-border/30">
-                  Introducción
+                  {estrategia.title}
                 </h2>
                 <p className="text-lg leading-relaxed">
-                  En la era digital actual, la automatización se ha convertido en un pilar fundamental para escalar negocios y optimizar procesos. 
-                  Un blog automatizado con IA no es solo una herramienta de marketing, sino un activo que trabaja las 24 horas del día para atraer tráfico cualificado y generar oportunidades de negocio.
+                  {estrategia.description}
                 </p>
+                {estrategia.content && (
+                  <p className="text-lg leading-relaxed mt-4">
+                    {estrategia.content}
+                  </p>
+                )}
               </section>
 
-              {/* Beneficios */}
-              <section id="beneficios" className="scroll-mt-24">
-                <h2 className="text-3xl font-bold mt-16 mb-6 pb-2 border-b border-border/30">
-                  Beneficios Clave
-                </h2>
-                <div className="grid md:grid-cols-2 gap-6 my-8">
-                  {[
-                    {
-                      title: 'Ahorro de Tiempo',
-                      description: 'Reduce el tiempo de creación de contenido en un 70% con herramientas de IA avanzadas.'
-                    },
-                    {
-                      title: 'Escalabilidad',
-                      description: 'Publica contenido de manera consistente sin aumentar tu carga de trabajo.'
-                    },
-                    {
-                      title: 'Optimización SEO',
-                      description: 'Las herramientas de IA ayudan a optimizar el contenido para motores de búsqueda.'
-                    },
-                    {
-                      title: 'Monetización',
-                      description: 'Genera múltiples flujos de ingresos con contenido automatizado.'
-                    }
-                  ].map((benefit, i) => (
-                    <div key={i} className="bg-muted/30 p-5 rounded-xl">
-                      <h3 className="font-semibold text-lg mb-2">{benefit.title}</h3>
-                      <p className="text-muted-foreground text-sm">{benefit.description}</p>
+              {/* Características clave */}
+              {estrategia.features && estrategia.features.length > 0 && (
+                <section id="caracteristicas" className="scroll-mt-24">
+                  <h2 className="text-3xl font-bold mt-16 mb-6 pb-2 border-b border-border/30">
+                    Características Clave
+                  </h2>
+                  <div className="grid md:grid-cols-2 gap-6 my-8">
+                    {estrategia.features.map((feature, i) => (
+                      <div key={i} className="bg-muted/30 p-5 rounded-xl border border-border/30 hover:border-primary/30 transition-colors">
+                        <div className="flex items-center mb-2">
+                          <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                          <h3 className="font-semibold text-lg">Característica {i + 1}</h3>
+                        </div>
+                        <p className="text-muted-foreground">{feature}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Herramientas recomendadas */}
+              {estrategia.automationTools && estrategia.automationTools.length > 0 && (
+                <section id="herramientas" className="scroll-mt-24">
+                  <h2 className="text-3xl font-bold mt-16 mb-6 pb-2 border-b border-border/30">
+                    Herramientas Recomendadas
+                  </h2>
+                  <div className="grid md:grid-cols-2 gap-6 my-8">
+                    {estrategia.automationTools.map((tool, i) => (
+                      <div key={i} className="bg-muted/30 p-5 rounded-xl border border-border/30 hover:border-primary/30 transition-colors">
+                        <div className="flex items-center mb-2">
+                          <Settings className="h-5 w-5 text-blue-500 mr-2" />
+                          <h3 className="font-semibold text-lg">{tool}</h3>
+                        </div>
+                        <p className="text-muted-foreground">
+                          {estrategia.tools?.[i]?.description || 'Herramienta esencial para implementar esta estrategia.'}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Potencial de ingresos */}
+              {estrategia.revenuePotential && (
+                <section id="ingresos" className="scroll-mt-24">
+                  <h2 className="text-3xl font-bold mt-16 mb-6 pb-2 border-b border-border/30">
+                    Potencial de Ingresos
+                  </h2>
+                  <div className="bg-gradient-to-r from-primary/5 to-secondary/5 p-6 rounded-2xl border border-border/30">
+                    <div className="flex items-center mb-4">
+                      <TrendingUp className="h-6 w-6 text-green-500 mr-2" />
+                      <h3 className="text-xl font-semibold">Rango de Ingresos Estimado</h3>
                     </div>
-                  ))}
+                    <div className="text-3xl font-bold text-primary mb-2">
+                      ${estrategia.revenuePotential.min}K - ${estrategia.revenuePotential.max}K
+                      <span className="text-lg font-normal text-muted-foreground ml-2">
+                        /{estrategia.revenuePotential.period === 'mes' ? 'mes' : 'año'}
+                      </span>
+                    </div>
+                    {estrategia.pricingStrategy && (
+                      <p className="text-muted-foreground mb-4">
+                        Modelo de negocio: <span className="font-medium text-foreground">{estrategia.pricingStrategy.model}</span> - {estrategia.pricingStrategy.description}
+                      </p>
+                    )}
+                    {estrategia.successStory && (
+                      <div className="mt-4 p-4 bg-background/50 rounded-lg border border-border/30">
+                        <p className="font-medium mb-1">✧ Caso de Éxito ✧</p>
+                        <p className="text-sm">
+                          <span className="font-medium">{estrategia.successStory.example}:</span> {estrategia.successStory.result}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              )}
+
+              {/* Cómo empezar */}
+              <section id="implementacion" className="scroll-mt-24">
+                <h2 className="text-3xl font-bold mt-16 mb-6 pb-2 border-b border-border/30">
+                  Cómo Empezar
+                </h2>
+                <div className="bg-muted/30 p-6 rounded-2xl border border-border/30">
+                  <h3 className="text-xl font-semibold mb-4">Sigue estos pasos para implementar esta estrategia:</h3>
+                  <ol className="space-y-4">
+                    <li className="flex items-start">
+                      <span className="flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 text-primary font-medium text-sm mr-3 mt-0.5 flex-shrink-0">1</span>
+                      <div>
+                        <h4 className="font-medium">Investiga y elige las herramientas adecuadas</h4>
+                        <p className="text-muted-foreground text-sm">Selecciona las herramientas que mejor se adapten a tus necesidades y presupuesto.</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 text-primary font-medium text-sm mr-3 mt-0.5 flex-shrink-0">2</span>
+                      <div>
+                        <h4 className="font-medium">Configura tu infraestructura</h4>
+                        <p className="text-muted-foreground text-sm">Prepara tu sitio web, cuentas y configuraciones iniciales.</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 text-primary font-medium text-sm mr-3 mt-0.5 flex-shrink-0">3</span>
+                      <div>
+                        <h4 className="font-medium">Desarrolla tu estrategia de contenido</h4>
+                        <p className="text-muted-foreground text-sm">Crea un calendario editorial y planifica tu contenido.</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="flex items-center justify-center h-6 w-6 rounded-full bg-primary/10 text-primary font-medium text-sm mr-3 mt-0.5 flex-shrink-0">4</span>
+                      <div>
+                        <h4 className="font-medium">Automatiza y escala</h4>
+                        <p className="text-muted-foreground text-sm">Implementa sistemas de automatización para hacer crecer tu negocio.</p>
+                      </div>
+                    </li>
+                  </ol>
+                  <div className="mt-6">
+                    <Button className="w-full sm:w-auto">
+                      Comenzar ahora <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </section>
 
@@ -346,24 +465,74 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           </article>
 
           {/* Sidebar */}
-          <aside className="lg:col-span-3 space-y-8">
-            {/* Tabla de contenidos - Móvil */}
+          <div className="lg:col-span-3 space-y-8">
+            {/* Información de la estrategia */}
+            <Card className="border-border/30">
+              <CardHeader>
+                <h3 className="text-lg font-semibold flex items-center">
+                  <Zap className="h-5 w-5 mr-2 text-yellow-500" />
+                  Detalles de la Estrategia
+                </h3>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Categoría</p>
+                  <p className="font-medium">{estrategia.category}</p>
+                </div>
+                {estrategia.difficulty && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Nivel de Dificultad</p>
+                    <p className="font-medium">{estrategia.difficulty}</p>
+                  </div>
+                )}
+                {estrategia.pricingStrategy && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Modelo de Negocio</p>
+                    <p className="font-medium">{estrategia.pricingStrategy.model}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{estrategia.pricingStrategy.description}</p>
+                  </div>
+                )}
+                {estrategia.readTime && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Tiempo de Lectura</p>
+                    <p className="font-medium">{estrategia.readTime}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Tabla de contenidos - Mobile */}
             <div className="lg:hidden">
               <TableOfContents sections={sections} />
             </div>
 
             {/* Recursos relacionados */}
-            <div>
-              <h3 className="font-semibold text-lg mb-4 flex items-center">
-                <span className="h-1 w-4 bg-primary rounded-full mr-2"></span>
-                Recursos Relacionados
-              </h3>
-              <div className="space-y-4">
-                {relatedResources.map((resource, i) => (
-                  <RelatedResource key={i} {...resource} />
-                ))}
+            {relatedResources.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold mb-4 flex items-center">
+                  <MessageSquare className="h-5 w-5 mr-2 text-primary" />
+                  Estrategias Relacionadas
+                </h3>
+                <div className="space-y-4">
+                  {relatedResources.map((resource, i) => (
+                    <RelatedResource key={i} {...resource} />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* CTA */}
+            <Card className="bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
+              <CardContent className="pt-6">
+                <h3 className="font-semibold text-lg mb-2">¿Listo para comenzar?</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Aprende a implementar esta estrategia paso a paso con nuestra guía detallada.
+                </p>
+                <Button className="w-full">
+                  Obtener Guía Completa <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardContent>
+            </Card>
 
             {/* Boletín informativo */}
             <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-background">
@@ -371,6 +540,9 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                 <CardTitle className="text-xl">¿Quieres más estrategias como esta?</CardTitle>
                 <p className="text-sm text-muted-foreground">
                   Suscríbete a nuestro boletín semanal con las mejores estrategias de marketing digital.
+                  <br />
+                  <br />
+                  <a href="https://pascaldev.com/boletin" className="text-primary underline">Suscribirme</a>
                 </p>
               </CardHeader>
               <CardContent>
@@ -380,7 +552,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
                 </div>
               </CardContent>
             </Card>
-          </aside>
+          </div>
         </div>
       </div>
 

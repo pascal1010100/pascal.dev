@@ -6,10 +6,10 @@ import { Loader2 } from 'lucide-react';
 import { estrategias } from "@/data/estrategias";
 import { 
   StrategyCard, 
-  StrategyFilters, 
   StrategyHero, 
   StrategyCTA 
 } from './components';
+import { StrategyFilters } from './components/StrategyFilters';
 import { Estrategia, SortOption } from './types/estrategia';
 
 const sortOptions: SortOption[] = [

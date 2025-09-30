@@ -11,6 +11,29 @@ export interface Estrategia {
   tags?: string[];
   difficulty?: Difficulty;
   readTime?: string;
+  features?: string[];
+  tools?: {
+    name: string;
+    description: string;
+    url?: string;
+  }[];
+  steps?: string[];
+  benefits?: string[];
+  pricingStrategy?: {
+    model: 'Recurrente' | 'Unico' | 'Suscripción' | 'Freemium';
+    description: string;
+  };
+  automationTools?: string[];
+  revenuePotential?: {
+    min: number;
+    max: number;
+    currency?: string;
+    period?: 'mes' | 'año';
+  };
+  successStory?: {
+    example: string;
+    result: string;
+  };
 }
 
 export interface DifficultyInfo {
