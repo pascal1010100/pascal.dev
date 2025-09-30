@@ -2,101 +2,421 @@ import { notFound } from "next/navigation";
 import { estrategias } from "@/data/estrategias";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Share2, Clock, BookOpen, ArrowRight, MessageSquare, Tag } from "lucide-react";
+import Link from "next/link";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
-// ✅ Tipado inline directo y sin tipo externo
+// Componente para la tabla de contenidos
+function TableOfContents({ sections }: { sections: { id: string; title: string }[] }) {
+  return (
+    <div className="sticky top-24 self-start">
+      <Card className="p-6 border-border/50 shadow-sm">
+        <h3 className="font-medium text-lg mb-4 flex items-center">
+          <BookOpen className="h-5 w-5 mr-2 text-primary" />
+          Contenido
+        </h3>
+        <nav className="space-y-2">
+          {sections.map((section) => (
+            <a
+              key={section.id}
+              href={`#${section.id}`}
+              className="block text-muted-foreground hover:text-foreground transition-colors text-sm py-1.5 hover:pl-1.5 transition-all"
+            >
+              {section.title}
+            </a>
+          ))}
+        </nav>
+      </Card>
+    </div>
+  );
+}
+
+// Componente de tarjeta de recurso relacionado
+function RelatedResource({ title, description, href }: { title: string; description: string; href: string }) {
+  return (
+    <Link href={href}>
+      <Card className="h-full hover:shadow-md transition-shadow border-border/50">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">{title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{description}</p>
+          <div className="flex items-center text-sm text-primary font-medium">
+            Ver recurso <ArrowRight className="ml-1 h-4 w-4" />
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}
+
+// Componente de autor
+function AuthorBio() {
+  return (
+    <div className="flex items-start gap-4 p-6 bg-muted/30 rounded-xl">
+      <div className="relative h-16 w-16 rounded-full overflow-hidden border-2 border-primary/20">
+        <Image
+          src="/images/team/pascal.jpg"
+          alt="Pascal Espíritu"
+          fill
+          className="object-cover"
+        />
+      </div>
+      <div>
+        <h4 className="font-medium">Pascal Espíritu</h4>
+        <p className="text-sm text-muted-foreground mb-2">Fundador & Experto en IA</p>
+        <p className="text-sm">
+          Apasionado por la tecnología y la enseñanza con más de 10 años de experiencia en desarrollo web y marketing digital.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params; // ✅ Ahora entiende que viene como promesa
+  const { slug } = await params;
   const estrategia = estrategias.find((item) => item.slug === slug);
 
   if (!estrategia) return notFound();
 
+  const sections = [
+    { id: 'introduccion', title: 'Introducción' },
+    { id: 'beneficios', title: 'Beneficios Clave' },
+    { id: 'implementacion', title: 'Cómo Implementarlo' },
+    { id: 'herramientas', title: 'Herramientas Recomendadas' },
+    { id: 'conclusion', title: 'Conclusión' },
+  ];
+
+  const relatedResources = [
+    {
+      title: 'Guía Completa de Marketing de Contenidos',
+      description: 'Aprende a crear una estrategia de contenido efectiva que genere tráfico y conversiones.',
+      href: '/recursos/guia-marketing-contenidos'
+    },
+    {
+      title: 'Plantilla de Calendario Editorial',
+      description: 'Descarga nuestra plantilla gratuita para planificar y organizar tu contenido.',
+      href: '/recursos/plantilla-calendario-editorial'
+    },
+  ];
+
   return (
-    <main className="min-h-screen px-4 sm:px-6 py-10 sm:py-16 bg-background text-foreground">
-      <article className="max-w-4xl mx-auto animate-fade-in">
-        <header className="mb-10 text-center">
-          <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight mb-2">
-            {estrategia.title}
-          </h1>
-          <p className="text-muted-foreground text-base mb-1">
-            Por <span className="font-medium">Pascal Espíritu</span> — Julio 2025
-          </p>
-          <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            {estrategia.description}
-          </p>
-        </header>
-
-        {/* Publicidad superior */}
-        <div className="w-full max-w-3xl mx-auto mb-6">
-          <div className="bg-gray-100 dark:bg-gray-800 text-center py-4 rounded-xl text-sm text-muted-foreground">
-            Publicidad (728x90)
-          </div>
-        </div>
-
-        <div className="overflow-hidden rounded-2xl shadow-2xl mb-10">
-          <Image
-            src={estrategia.image}
-            alt={estrategia.title}
-            width={1200}
-            height={600}
-            className="w-full h-[300px] sm:h-[450px] object-cover"
-            priority
-          />
-        </div>
-
-        <div className="prose prose-neutral dark:prose-invert max-w-none text-lg leading-relaxed">
-          <h2 className="text-2xl font-semibold mt-8">¿Qué significa tener un blog automatizado?</h2>
-          <p>
-            Un blog automatizado con IA significa tener una máquina de contenido que trabaja para ti 24/7. Genera artículos, programa publicaciones y hasta posiciona en buscadores sin que tengas que escribir una sola línea cada día.
-          </p>
-
-          <h2 className="text-2xl font-semibold mt-10">Paso a paso para crear tu blog con IA</h2>
-          <ol className="list-decimal list-inside space-y-2">
-            <li><strong>Elige tu nicho</strong>: educación, salud, tecnología, etc.</li>
-            <li><strong>Genera contenido con ChatGPT</strong>: crea artículos, guías y títulos atractivos.</li>
-            <li><strong>Organiza todo en Notion AI</strong>: estructura ideas, categorías y calendario.</li>
-            <li><strong>Publica automáticamente</strong>: con Zapier, Substack o Notion-to-Blog.</li>
-          </ol>
-
-          {/* Anuncio medio contenido */}
-          <div className="w-full max-w-3xl mx-auto my-8">
-            <div className="bg-gray-100 dark:bg-gray-800 text-center py-4 rounded-xl text-sm text-muted-foreground">
-              Publicidad relacionada (468x60)
+    <div className="min-h-screen bg-background">
+      {/* Hero Section */}
+      <section className="relative pt-24 pb-16 px-4 sm:px-6 bg-gradient-to-b from-primary/5 to-background">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-primary/10 text-sm font-medium text-primary">
+              <Tag className="h-4 w-4" />
+              {estrategia.category || 'Estrategia Digital'}
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 leading-tight">
+              {estrategia.title}
+            </h1>
+            <p className="text-xl text-muted-foreground mb-6">
+              {estrategia.description}
+            </p>
+            <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+              <div className="flex items-center">
+                <Clock className="h-4 w-4 mr-1.5" />
+                {Math.ceil((estrategia.content?.split(' ') || []).length / 200) || 5} min de lectura
+              </div>
+              <span>•</span>
+              <time dateTime={estrategia.date || '2025-07-15'}>
+                {format(new Date(estrategia.date || '2025-07-15'), "d 'de' MMMM, yyyy", { locale: es })}
+              </time>
             </div>
           </div>
+        </div>
+      </section>
 
-          <h2 className="text-2xl font-semibold mt-10">Monetiza desde el primer mes</h2>
-          <p>
-            Agrega enlaces de afiliados, publicidad contextual (como Google AdSense) o promociona tus propios productos digitales. Incluso puedes convertir tu blog en un boletín pago con plataformas como Beehiiv.
-          </p>
-
-          <h2 className="text-2xl font-semibold mt-10">Lo que nadie te dice</h2>
-          <p>
-            El verdadero valor de un blog automatizado no es solo el dinero, sino el tiempo libre que te da para crear, viajar o simplemente descansar. Empiezas escribiendo para vivir, y terminas dejando que el blog escriba por ti.
-          </p>
-
-          <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground">
-            Un blog con IA no es el futuro. Es el presente que todavía no todos están usando.
-          </blockquote>
-
-          <div className="flex flex-wrap gap-2 mt-10">
-            <Badge variant="outline">IA</Badge>
-            <Badge variant="outline">Automatización</Badge>
-            <Badge variant="outline">Marketing de Contenidos</Badge>
-            <Badge variant="outline">Monetización</Badge>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Tabla de contenidos - Desktop */}
+          <div className="hidden lg:block lg:col-span-3">
+            <TableOfContents sections={sections} />
           </div>
 
-          {/* CTA final */}
-          <div className="bg-muted text-center py-8 px-6 rounded-xl mt-16 shadow">
-            <h3 className="text-2xl font-semibold mb-3">¿Listo para lanzar tu blog con IA?</h3>
-            <p className="mb-4 text-muted-foreground text-base">
-              Únete a nuestro boletín gratuito y recibe tutoriales, recursos y estrategias exclusivas cada semana.
-            </p>
-            <button className="bg-primary text-white px-6 py-2.5 rounded-full hover:bg-primary/90 transition">
-              Quiero Empezar Gratis
-            </button>
+          {/* Artículo principal */}
+          <article className="lg:col-span-6">
+            {/* Imagen destacada */}
+            <div className="rounded-2xl overflow-hidden mb-10 shadow-xl">
+              <Image
+                src={estrategia.image}
+                alt={estrategia.title}
+                width={1200}
+                height={630}
+                className="w-full h-auto aspect-video object-cover"
+                priority
+              />
+            </div>
+
+            {/* Contenido del artículo */}
+            <div className="prose prose-lg dark:prose-invert max-w-none">
+              {/* Introducción */}
+              <section id="introduccion" className="scroll-mt-24">
+                <h2 className="text-3xl font-bold mt-12 mb-6 pb-2 border-b border-border/30">
+                  Introducción
+                </h2>
+                <p className="text-lg leading-relaxed">
+                  En la era digital actual, la automatización se ha convertido en un pilar fundamental para escalar negocios y optimizar procesos. 
+                  Un blog automatizado con IA no es solo una herramienta de marketing, sino un activo que trabaja las 24 horas del día para atraer tráfico cualificado y generar oportunidades de negocio.
+                </p>
+              </section>
+
+              {/* Beneficios */}
+              <section id="beneficios" className="scroll-mt-24">
+                <h2 className="text-3xl font-bold mt-16 mb-6 pb-2 border-b border-border/30">
+                  Beneficios Clave
+                </h2>
+                <div className="grid md:grid-cols-2 gap-6 my-8">
+                  {[
+                    {
+                      title: 'Ahorro de Tiempo',
+                      description: 'Reduce el tiempo de creación de contenido en un 70% con herramientas de IA avanzadas.'
+                    },
+                    {
+                      title: 'Escalabilidad',
+                      description: 'Publica contenido de manera consistente sin aumentar tu carga de trabajo.'
+                    },
+                    {
+                      title: 'Optimización SEO',
+                      description: 'Las herramientas de IA ayudan a optimizar el contenido para motores de búsqueda.'
+                    },
+                    {
+                      title: 'Monetización',
+                      description: 'Genera múltiples flujos de ingresos con contenido automatizado.'
+                    }
+                  ].map((benefit, i) => (
+                    <div key={i} className="bg-muted/30 p-5 rounded-xl">
+                      <h3 className="font-semibold text-lg mb-2">{benefit.title}</h3>
+                      <p className="text-muted-foreground text-sm">{benefit.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* CTA intermedio */}
+              <div className="my-12 p-6 bg-primary/5 rounded-xl border border-primary/10">
+                <h3 className="text-xl font-semibold mb-3">¿Quieres implementar esta estrategia en tu negocio?</h3>
+                <p className="text-muted-foreground mb-4">
+                  Descarga nuestra guía paso a paso con ejemplos prácticos y plantillas listas para usar.
+                </p>
+                <Button>
+                  Descargar Guía Gratis <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Implementación */}
+              <section id="implementacion" className="scroll-mt-24">
+                <h2 className="text-3xl font-bold mt-16 mb-6 pb-2 border-b border-border/30">
+                  Cómo Implementarlo en 5 Pasos
+                </h2>
+                <ol className="space-y-8">
+                  {[
+                    {
+                      title: '1. Define tu Estrategia de Contenido',
+                      content: 'Identifica a tu audiencia objetivo, sus necesidades y los temas que más les interesan. Crea un calendario editorial con frecuencia de publicación realista.'
+                    },
+                    {
+                      title: '2. Elige las Herramientas Adecuadas',
+                      content: 'Selecciona plataformas de generación de contenido, programación y análisis que se adapten a tus necesidades y presupuesto.'
+                    },
+                    {
+                      title: '3. Automatiza la Creación de Contenido',
+                      content: 'Utiliza IA para generar borradores, optimizar para SEO y crear imágenes o gráficos complementarios.'
+                    },
+                    {
+                      title: '4. Programa y Publica',
+                      content: 'Configura un flujo de trabajo automatizado que incluya revisión, edición y publicación programada.'
+                    },
+                    {
+                      title: '5. Mide y Optimiza',
+                      content: 'Analiza el rendimiento de tu contenido y ajusta tu estrategia según los resultados obtenidos.'
+                    }
+                  ].map((step, i) => (
+                    <li key={i} className="relative pl-8">
+                      <div className="absolute left-0 top-0 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                        {i + 1}
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
+                      <p className="text-muted-foreground">{step.content}</p>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+
+              {/* Herramientas recomendadas */}
+              <section id="herramientas" className="scroll-mt-24">
+                <h2 className="text-3xl font-bold mt-16 mb-6 pb-2 border-b border-border/30">
+                  Herramientas Recomendadas
+                </h2>
+                <div className="grid md:grid-cols-2 gap-6 my-8">
+                  {[
+                    {
+                      name: 'ChatGPT',
+                      category: 'Generación de Contenido',
+                      description: 'Ideal para crear borradores rápidos y generar ideas de contenido.'
+                    },
+                    {
+                      name: 'Notion AI',
+                      category: 'Organización',
+                      description: 'Perfecto para estructurar tus ideas y planificar contenido.'
+                    },
+                    {
+                      name: 'Zapier',
+                      category: 'Automatización',
+                      description: 'Conecta diferentes aplicaciones para automatizar flujos de trabajo.'
+                    },
+                    {
+                      name: 'Google Analytics',
+                      category: 'Análisis',
+                      description: 'Mide el rendimiento de tu contenido y audiencia.'
+                    }
+                  ].map((tool, i) => (
+                    <div key={i} className="border rounded-xl p-5 hover:border-primary/30 transition-colors">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold">
+                          {tool.name.charAt(0)}
+                        </div>
+                        <div>
+                          <h4 className="font-semibold">{tool.name}</h4>
+                          <span className="text-xs text-muted-foreground">{tool.category}</span>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{tool.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Conclusión */}
+              <section id="conclusion" className="scroll-mt-24">
+                <h2 className="text-3xl font-bold mt-16 mb-6 pb-2 border-b border-border/30">
+                  Conclusión
+                </h2>
+                <p className="text-lg leading-relaxed">
+                  La automatización de blogs con IA ya no es una opción, sino una necesidad para mantenerse competitivo en el mundo digital. 
+                  Al implementar las estrategias y herramientas mencionadas, podrás escalar tu presencia en línea, ahorrar tiempo valioso y enfocarte en lo que realmente importa: hacer crecer tu negocio.
+                </p>
+              </section>
+
+              {/* Tags */}
+              <div className="flex flex-wrap gap-2 mt-12 mb-8">
+                {['IA', 'Automatización', 'Marketing de Contenidos', 'Monetización', 'Blogging', 'SEO'].map((tag) => (
+                  <Badge key={tag} variant="outline" className="px-3 py-1 text-sm">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+
+              {/* Compartir */}
+              <div className="flex items-center gap-4 py-6 border-t border-border/30">
+                <span className="text-sm text-muted-foreground">Compartir:</span>
+                {['Twitter', 'LinkedIn', 'Facebook', 'Email'].map((social) => (
+                  <Button key={social} variant="outline" size="sm" className="gap-2">
+                    <Share2 className="h-4 w-4" />
+                    {social}
+                  </Button>
+                ))}
+              </div>
+
+              {/* Autor */}
+              <div className="mt-12 pt-8 border-t border-border/30">
+                <AuthorBio />
+              </div>
+
+              {/* Comentarios */}
+              <div className="mt-16 pt-8 border-t border-border/30">
+                <div className="flex items-center gap-2 mb-6">
+                  <MessageSquare className="h-5 w-5 text-primary" />
+                  <h3 className="text-xl font-semibold">Comentarios</h3>
+                </div>
+                <div className="bg-muted/30 rounded-xl p-6 text-center">
+                  <p className="text-muted-foreground mb-4">¿Tienes alguna pregunta o comentario sobre esta estrategia?</p>
+                  <Button variant="outline">Iniciar discusión</Button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          {/* Sidebar */}
+          <aside className="lg:col-span-3 space-y-8">
+            {/* Tabla de contenidos - Móvil */}
+            <div className="lg:hidden">
+              <TableOfContents sections={sections} />
+            </div>
+
+            {/* Recursos relacionados */}
+            <div>
+              <h3 className="font-semibold text-lg mb-4 flex items-center">
+                <span className="h-1 w-4 bg-primary rounded-full mr-2"></span>
+                Recursos Relacionados
+              </h3>
+              <div className="space-y-4">
+                {relatedResources.map((resource, i) => (
+                  <RelatedResource key={i} {...resource} />
+                ))}
+              </div>
+            </div>
+
+            {/* Boletín informativo */}
+            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-background">
+              <CardHeader>
+                <CardTitle className="text-xl">¿Quieres más estrategias como esta?</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Suscríbete a nuestro boletín semanal con las mejores estrategias de marketing digital.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <Input placeholder="Tu correo electrónico" />
+                  <Button className="w-full">Suscribirme</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </aside>
+        </div>
+      </div>
+
+      {/* Artículos relacionados */}
+      <section className="bg-muted/30 py-16 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-2xl font-bold mb-8 text-center">Artículos Relacionados</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {estrategias
+              .filter((item) => item.slug !== slug)
+              .slice(0, 3)
+              .map((item) => (
+                <Link key={item.slug} href={`/estrategias/${item.slug}`}>
+                  <Card className="h-full group hover:shadow-md transition-shadow overflow-hidden">
+                    <div className="relative h-48">
+                      <Image
+                        src={item.image}
+                        alt={item.title}
+                        fill
+                        className="object-cover transition-transform group-hover:scale-105"
+                      />
+                    </div>
+                    <CardHeader>
+                      <CardTitle className="text-lg group-hover:text-primary transition-colors">
+                        {item.title}
+                      </CardTitle>
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {item.description}
+                      </p>
+                    </CardHeader>
+                  </Card>
+                </Link>
+              ))}
           </div>
         </div>
-      </article>
-    </main>
+      </section>
+    </div>
   );
 }

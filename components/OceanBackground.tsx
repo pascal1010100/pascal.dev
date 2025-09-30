@@ -1,97 +1,145 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 
-// Importar p5 dinámicamente para evitar problemas con SSR
-const Sketch = dynamic(() => import('react-p5').then((mod) => mod.default), {
-  ssr: false,
-});
+// Importación dinámica de Sketch de react-p5
+const Sketch = dynamic(
+  () => import('react-p5').then((mod) => mod.default || mod),
+  { 
+    ssr: false,
+    loading: () => <div className="absolute inset-0 bg-gradient-to-b from-blue-900 to-blue-600" />
+  }
+);
 
-const OceanBackground = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [mounted, setMounted] = useState(false);
-  const timeRef = useRef(0);
+// Tipo para p5
+type P5 = any;
 
+const OceanBackground = ({ className = '' }: { className?: string }) => {
+  const timeRef = useRef<number>(0);
+  const animationIdRef = useRef<number | null>(null);
+
+  // Animación del tiempo
   useEffect(() => {
-    setMounted(true);
+    const animate = () => {
+      timeRef.current += 0.01;
+      animationIdRef.current = requestAnimationFrame(animate);
+    };
+    
+    const id = requestAnimationFrame(animate);
+    animationIdRef.current = id;
+    
     return () => {
-      // Limpiar recursos si es necesario
+      if (animationIdRef.current !== null) {
+        cancelAnimationFrame(animationIdRef.current);
+      }
     };
   }, []);
 
-  const setup = (p5: any, canvasParentRef: Element) => {
-    const width = containerRef.current?.clientWidth || window.innerWidth;
-    const height = containerRef.current?.clientHeight || window.innerHeight;
+  // Configuración inicial
+  const setup = (p5: P5, canvasParentRef: Element) => {
+    // Crear el canvas que se ajuste al contenedor padre
+    const resizeCanvas = () => {
+      const parent = canvasParentRef as HTMLElement;
+      p5.resizeCanvas(parent.offsetWidth, parent.offsetHeight);
+    };
     
-    const canvas = p5.createCanvas(width, height, p5.WEBGL).parent(canvasParentRef);
-    canvas.style('display', 'block');
-    canvas.style('position', 'absolute');
-    canvas.style('top', '0');
-    canvas.style('left', '0');
-    canvas.style('z-index', '-1');
+    const canvas = p5.createCanvas(
+      (canvasParentRef as HTMLElement).offsetWidth,
+      (canvasParentRef as HTMLElement).offsetHeight,
+      p5.WEBGL
+    ).parent(canvasParentRef);
     
-    p5.colorMode(p5.HSB, 255);
-    p5.angleMode(p5.RADIANS);
+    // Configuración de renderizado
+    p5.pixelDensity(window.devicePixelRatio);
+    
+    // Manejar el redimensionamiento de la ventana
+    const handleResize = () => {
+      resizeCanvas();
+      p5.redraw();
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    // Configuración de la cámara y luces
+    p5.perspective(p5.PI / 3, p5.width / p5.height, 0.1, 5000);
+    p5.ambientLight(40, 40, 60);
+    p5.pointLight(255, 255, 255, -100, -100, 100);
+    p5.pointLight(200, 200, 255, 100, 100, 100);
+    
+    // Limpieza del event listener al desmontar
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   };
-  
-  const draw = (p5: any) => {
-    // Fondo sólido
-    p5.background(0, 0, 20);
-    
-    // Configuración 3D básica
-    p5.rotateX(p5.PI / 3);
-    p5.scale(0.8);
-    
-    // Actualizar tiempo
-    timeRef.current += 0.01;
-    
-    // Dibujar ondas de agua
-    p5.noFill();
-    p5.stroke(160, 200, 255, 150);
-    p5.strokeWeight(1);
-    
-    const gridSize = 30;
-    const waveHeight = 20;
-    
-    // Dibujar malla de ondas simple
+
+  // Función de dibujo
+  const draw = (p5: P5) => {
+    // Configuración inicial
     p5.push();
-    p5.rotateZ(timeRef.current * 0.2);
     
-    for (let x = -p5.width; x < p5.width; x += gridSize) {
-      p5.beginShape();
-      for (let y = -p5.height; y < p5.height; y += gridSize) {
-        // Usar una función de onda simple
-        const distance = p5.dist(x, y, 0, 0);
-        const angle = p5.atan2(y, x);
-        const z = p5.sin(distance * 0.01 - timeRef.current * 2) * waveHeight;
-        
-        p5.vertex(x, y, z);
+    try {
+      // Limpiar el canvas con un color de fondo
+      p5.background(5, 10, 30);
+      
+      // Configuración de la cámara
+      p5.orbitControl(0.5, 0.5, 0.1); // Suavizar los controles de órbita
+      p5.rotateX(p5.PI / 3);
+      p5.rotateZ(timeRef.current * 0.05);
+      p5.translate(0, 0, -200);
+      
+      // Configuración de luces (se deben configurar en cada frame en modo WEBGL)
+      p5.ambientLight(40, 40, 60);
+      p5.pointLight(255, 255, 255, -100, -100, 100);
+      p5.pointLight(200, 200, 255, 100, 100, 100);
+      
+      // Dibujar olas
+      p5.noStroke();
+      for (let z = -500; z < 500; z += 50) {
+        p5.beginShape(p5.TRIANGLE_STRIP);
+        for (let x = -500; x <= 500; x += 50) {
+          // Calcular la altura de la ola basada en la distancia al centro y el tiempo
+          const distance = p5.dist(0, 0, x, z) * 0.01;
+          const wave1 = p5.sin(distance + timeRef.current * 2) * 20;
+          const wave2 = p5.sin(distance * 1.5 + timeRef.current * 1.5) * 10;
+          const y = wave1 + wave2;
+          
+          // Color basado en la posición y
+          const blueHue = p5.map(z, -500, 500, 180, 240);
+          p5.fill(0, 100, blueHue, 150);
+          
+          // Crear vértices para la malla
+          p5.vertex(x, y, z);
+          p5.vertex(x, y, z + 50);
+        }
+        p5.endShape();
       }
-      p5.endShape();
+      
+      // Partículas flotantes
+      p5.randomSeed(0);
+      for (let i = 0; i < 50; i++) {
+        const x = p5.random(-300, 300);
+        const y = p5.random(-200, 200);
+        const z = p5.random(-300, 300);
+        const size = p5.random(2, 5);
+        
+        p5.push();
+        p5.translate(x, y + p5.sin(timeRef.current * 0.5 + i) * 20, z);
+        p5.fill(255, 255, 255, p5.random(100, 200));
+        p5.noStroke();
+        p5.sphere(size);
+        p5.pop();
+      }
+    } catch (error) {
+      console.error('Error en la función draw:', error);
     }
+    
     p5.pop();
   };
 
-  const windowResized = (p5: any) => {
-    const width = containerRef.current?.clientWidth || window.innerWidth;
-    const height = containerRef.current?.clientHeight || window.innerHeight;
-    p5.resizeCanvas(width, height);
-  };
-
-  if (!mounted) return null;
-
   return (
-    <div 
-      ref={containerRef} 
-      className="fixed inset-0 w-full h-full pointer-events-none -z-50"
-      aria-hidden="true"
-    >
-      <Sketch 
-        setup={setup}
-        draw={draw}
-        windowResized={windowResized}
-      />
+    <div className={`absolute inset-0 w-full h-full ${className}`}>
+      <Sketch setup={setup} draw={draw} />
     </div>
   );
 };
