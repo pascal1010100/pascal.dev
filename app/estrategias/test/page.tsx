@@ -1,5 +1,3 @@
-import { notFound } from "next/navigation";
-
 type PageParams = {
   slug: string;
 };
