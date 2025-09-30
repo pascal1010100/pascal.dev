@@ -10,7 +10,7 @@ import {
   StrategyCTA 
 } from './components';
 import { StrategyFilters } from './components/StrategyFilters';
-import { Estrategia, SortOption } from './types/estrategia';
+import { SortOption } from './types/estrategia';
 
 const sortOptions: SortOption[] = [
   { value: 'recent', label: 'Más recientes' },

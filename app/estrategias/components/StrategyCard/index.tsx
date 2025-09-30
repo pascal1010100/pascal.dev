@@ -49,10 +49,6 @@ interface StrategyCardProps {
 }
 
 export function StrategyCard({ estrategia }: StrategyCardProps) {
-  const difficultyInfo = (level: string = 'Principiante'): DifficultyInfo => {
-    return difficultyLevels.find(d => d.level === level) || difficultyLevels[0];
-  };
-
   const categoryInfo = categoryIcons[estrategia.category || 'default'] || categoryIcons.default;
   
   return (
