@@ -216,4 +216,4 @@ export default function EstrategiasPage() {
       </div>
     </div>
   )
-}
+}//hola
