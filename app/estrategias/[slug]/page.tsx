@@ -98,8 +98,8 @@ interface Params {
   slug: string;
 }
 
-export default async function Page({ params }: { params: Params }) {
-  const { slug } = params;
+export default async function Page({ params }: { params: Promise<Params> }) {
+  const { slug } = await params;
   const estrategia = estrategias.find((item) => item.slug === slug);
 
   if (!estrategia) return notFound();
