@@ -2,8 +2,9 @@ import { notFound } from "next/navigation";
 import { blogPosts } from "@/data/blog";
 import Image from "next/image";
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find((p) => p.slug === params.slug);
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = blogPosts.find((p) => p.slug === slug);
 
   if (!post) return notFound();
 
