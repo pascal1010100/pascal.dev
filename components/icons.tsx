@@ -1,8 +1,25 @@
 import * as React from 'react';
-import { LucideProps, icons as lucideIcons } from 'lucide-react';
+import { LucideProps, icons as lucideIcons, LucideIcon } from 'lucide-react';
 
 // Re-export all Lucide icons
 export * from 'lucide-react';
+
+// Brand name mappings (common typos/variations to correct icon names)
+const BRAND_ALIASES: Record<string, string> = {
+  github: 'Github',
+  gitHub: 'Github',
+  GitHub: 'Github',
+  youtube: 'Youtube',
+  youTube: 'Youtube',
+  YouTube: 'Youtube',
+  linkedin: 'Linkedin',
+  linkedIn: 'Linkedin',
+  LinkedIn: 'Linkedin',
+  whatsapp: 'Whatsapp',
+  whatsApp: 'Whatsapp',
+  WhatsApp: 'Whatsapp',
+  // Add other common brand name variations here
+};
 
 // Custom icons can be added here
 export const Logo = (props: LucideProps) => (
@@ -22,390 +39,161 @@ export const Logo = (props: LucideProps) => (
   </svg>
 );
 
-// Type for icon names
-type IconName = keyof typeof lucideIcons | 'logo';
+// Fallback component for missing icons
+const FallbackIcon = (props: LucideProps) => (
+  <div 
+    className="inline-flex items-center justify-center text-muted-foreground"
+    style={{
+      width: props.size || 24,
+      height: props.size || 24,
+      ...props.style
+    }}
+  >
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="8" x2="12" y2="12" />
+      <line x1="12" y1="16" x2="12.01" y2="16" />
+    </svg>
+  </div>
+);
+
+// Common icon aliases
+const ICON_ALIASES: Record<string, string> = {
+  // Navigation
+  close: 'X',
+  menu: 'Menu',
+  search: 'Search',
+  
+  // Arrows
+  chevronDown: 'ChevronDown',
+  chevronRight: 'ChevronRight',
+  chevronUp: 'ChevronUp',
+  chevronLeft: 'ChevronLeft',
+  arrowRight: 'ArrowRight',
+  arrowLeft: 'ArrowLeft',
+  arrowUp: 'ArrowUp',
+  arrowDown: 'ArrowDown',
+  
+  // Common UI
+  externalLink: 'ExternalLink',
+  mail: 'Mail',
+  moon: 'Moon',
+  sun: 'Sun',
+  
+  // Resource section
+  tool: 'Wrench',
+  library: 'Library',
+  book: 'BookOpen',
+  layout: 'LayoutTemplate',
+  'graduation-cap': 'GraduationCap',
+  users: 'Users',
+  package: 'Package',
+  code: 'Code2',
+  terminal: 'Terminal',
+  database: 'Database',
+  server: 'Server',
+  cpu: 'Cpu',
+  zap: 'Zap',
+  flame: 'Flame',
+  star: 'Star',
+  heart: 'Heart',
+  thumbsUp: 'ThumbsUp',
+  messageSquare: 'MessageSquare',
+  share: 'Share2',
+  download: 'Download',
+  upload: 'Upload',
+  settings: 'Settings',
+  user: 'User',
+  users2: 'Users2',
+  helpCircle: 'HelpCircle',
+  info: 'Info',
+  alertCircle: 'AlertCircle',
+  checkCircle: 'CheckCircle2',
+  xCircle: 'XCircle',
+  plus: 'Plus',
+  minus: 'Minus',
+  trash: 'Trash2',
+  edit: 'Pencil',
+  copy: 'Copy',
+  link: 'Link',
+  calendar: 'Calendar',
+  clock: 'Clock',
+  filter: 'Filter',
+  grid: 'LayoutGrid',
+  list: 'List',
+  columns: 'Columns',
+  moreHorizontal: 'MoreHorizontal',
+  moreVertical: 'MoreVertical',
+  
+  // Add more aliases as needed
+};
+
+// Get icon by name with fallback support
+export function getIcon(name: string): React.ComponentType<LucideProps> {
+  if (!name) return FallbackIcon;
+  
+  // Check brand name aliases first, then icon aliases
+  const normalizedKey = BRAND_ALIASES[name] || ICON_ALIASES[name] || name;
+  
+  // Try to get the icon from lucideIcons (case-insensitive)
+  const iconKey = Object.keys(lucideIcons).find(
+    key => key.toLowerCase() === normalizedKey.toLowerCase()
+  );
+  
+  if (iconKey) {
+    return lucideIcons[iconKey as keyof typeof lucideIcons];
+  }
+  
+  // Fallback to FileCode for missing icons
+  return lucideIcons.FileCode || FallbackIcon;
+}
 
 // Component that dynamically renders icons
-export const Icons: Record<string, React.ComponentType<LucideProps>> = {
-  // Custom icons
-  logo: Logo,
+export const Icons: Record<string, React.ComponentType<LucideProps>> = new Proxy({} as Record<string, React.ComponentType<LucideProps>>, {
+  get(target, prop) {
+    const name = String(prop);
+    
+    // Return the Logo component for the 'logo' key
+    if (name === 'logo') {
+      return Logo;
+    }
+    
+    // Try to get the icon using getIcon
+    return getIcon(name);
+  },
   
-  // Lucide icons
-  ...Object.entries(lucideIcons).reduce(
-    (acc, [key, icon]) => {
-      acc[key] = icon;
-      return acc;
-    },
-    {} as Record<string, React.ComponentType<LucideProps>>
-  ),
+  // This ensures Object.keys() and other methods work correctly
+  ownKeys() {
+    return ['logo', ...Object.keys(lucideIcons)];
+  },
   
-  // Aliases for common icons
-  search: lucideIcons.Search,
-  menu: lucideIcons.Menu,
-  close: lucideIcons.X,
-  chevronDown: lucideIcons.ChevronDown,
-  chevronRight: lucideIcons.ChevronRight,
-  arrowRight: lucideIcons.ArrowRight,
-  arrowLeft: lucideIcons.ArrowLeft,
-  externalLink: lucideIcons.ExternalLink,
-  mail: lucideIcons.Mail,
-  github: lucideIcons.GitHub,
-  twitter: lucideIcons.Twitter,
-  linkedin: lucideIcons.Linkedin,
-  moon: lucideIcons.Moon,
-  sun: lucideIcons.Sun,
-  
-  // Resource section icons
-  tool: lucideIcons.Wrench,
-  library: lucideIcons.Library,
-  book: lucideIcons.BookOpen,
-  layout: lucideIcons.LayoutTemplate,
-  'graduation-cap': lucideIcons.GraduationCap,
-  users: lucideIcons.Users,
-  package: lucideIcons.Package,
-  code: lucideIcons.Code2,
-  terminal: lucideIcons.Terminal,
-  database: lucideIcons.Database,
-  server: lucideIcons.Server,
-  cpu: lucideIcons.Cpu,
-  zap: lucideIcons.Zap,
-  flame: lucideIcons.Flame,
-  star: lucideIcons.Star,
-  heart: lucideIcons.Heart,
-  thumbsUp: lucideIcons.ThumbsUp,
-  messageSquare: lucideIcons.MessageSquare,
-  share2: lucideIcons.Share2,
-  download: lucideIcons.Download,
-  upload: lucideIcons.Upload,
-  settings: lucideIcons.Settings,
-  user: lucideIcons.User,
-  users2: lucideIcons.Users2,
-  helpCircle: lucideIcons.HelpCircle,
-  info: lucideIcons.Info,
-  alertCircle: lucideIcons.AlertCircle,
-  checkCircle: lucideIcons.CheckCircle2,
-  xCircle: lucideIcons.XCircle,
-  plus: lucideIcons.Plus,
-  minus: lucideIcons.Minus,
-  trash: lucideIcons.Trash2,
-  edit: lucideIcons.Pencil,
-  copy: lucideIcons.Copy,
-  link: lucideIcons.Link,
-  externalLink2: lucideIcons.ExternalLink,
-  calendar: lucideIcons.Calendar,
-  clock: lucideIcons.Clock,
-  filter: lucideIcons.Filter,
-  grid: lucideIcons.Grid,
-  list: lucideIcons.List,
-  columns: lucideIcons.Columns,
-  moreHorizontal: lucideIcons.MoreHorizontal,
-  moreVertical: lucideIcons.MoreVertical,
-  chevronUp: lucideIcons.ChevronUp,
-  chevronLeft: lucideIcons.ChevronLeft,
-  chevronDown2: lucideIcons.ChevronDown,
-  arrowUp: lucideIcons.ArrowUp,
-  arrowDown: lucideIcons.ArrowDown,
-  arrowUpRight: lucideIcons.ArrowUpRight,
-  arrowDownRight: lucideIcons.ArrowDownRight,
-  arrowDownLeft: lucideIcons.ArrowDownLeft,
-  arrowUpLeft: lucideIcons.ArrowUpLeft,
-  maximize: lucideIcons.Maximize2,
-  minimize: lucideIcons.Minimize2,
-  refreshCw: lucideIcons.RefreshCw,
-  rotateCw: lucideIcons.RotateCw,
-  rotateCcw: lucideIcons.RotateCcw,
-  loader: lucideIcons.Loader2,
-  lock: lucideIcons.Lock,
-  unlock: lucideIcons.Unlock,
-  eye: lucideIcons.Eye,
-  eyeOff: lucideIcons.EyeOff,
-  bell: lucideIcons.Bell,
-  bellOff: lucideIcons.BellOff,
-  bookmark: lucideIcons.Bookmark,
-  bookmarkPlus: lucideIcons.BookmarkPlus,
-  bookmarkMinus: lucideIcons.BookmarkMinus,
-  bookmarkCheck: lucideIcons.BookmarkCheck,
-  bookmarkX: lucideIcons.BookmarkX,
-  home: lucideIcons.Home,
-  inbox: lucideIcons.Inbox,
-  send: lucideIcons.Send,
-  paperclip: lucideIcons.Paperclip,
-  fileText: lucideIcons.FileText,
-  file: lucideIcons.File,
-  folder: lucideIcons.Folder,
-  folderPlus: lucideIcons.FolderPlus,
-  folderMinus: lucideIcons.FolderMinus,
-  folderOpen: lucideIcons.FolderOpen,
-  folderInput: lucideIcons.FolderInput,
-  folderOutput: lucideIcons.FolderOutput,
-  folderX: lucideIcons.FolderX,
-  folderCheck: lucideIcons.FolderCheck,
-  folderSearch: lucideIcons.FolderSearch,
-  image: lucideIcons.Image,
-  camera: lucideIcons.Camera,
-  video: lucideIcons.Video,
-  music: lucideIcons.Music,
-  mic: lucideIcons.Mic,
-  micOff: lucideIcons.MicOff,
-  volume2: lucideIcons.Volume2,
-  volumeX: lucideIcons.VolumeX,
-  volume1: lucideIcons.Volume1,
-  volume: lucideIcons.Volume,
-  headphones: lucideIcons.Headphones,
-  cast: lucideIcons.Cast,
-  airplay: lucideIcons.Airplay,
-  monitor: lucideIcons.Monitor,
-  tv: lucideIcons.Tv,
-  smartphone: lucideIcons.Smartphone,
-  tablet: lucideIcons.Tablet,
-  watch: lucideIcons.Watch,
-  printer: lucideIcons.Printer,
-  hardDrive: lucideIcons.HardDrive,
-  creditCard: lucideIcons.CreditCard,
-  dollarSign: lucideIcons.DollarSign,
-  euro: lucideIcons.Euro,
-  poundSterling: lucideIcons.PoundSterling,
-  yen: lucideIcons.Yen,
-  bitcoin: lucideIcons.Bitcoin,
-  activity: lucideIcons.Activity,
-  alertTriangle: lucideIcons.AlertTriangle,
-  anchor: lucideIcons.Anchor,
-  archive: lucideIcons.Archive,
-  award: lucideIcons.Award,
-  barChart2: lucideIcons.BarChart2,
-  battery: lucideIcons.Battery,
-  batteryCharging: lucideIcons.BatteryCharging,
-  bellRing: lucideIcons.BellRing,
-  bluetooth: lucideIcons.Bluetooth,
-  bold: lucideIcons.Bold,
-  bookOpen: lucideIcons.BookOpen,
-  bookmarkMinus2: lucideIcons.BookmarkMinus,
-  bookmarkPlus2: lucideIcons.BookmarkPlus,
-  box: lucideIcons.Box,
-  briefcase: lucideIcons.Briefcase,
-  calendarDays: lucideIcons.CalendarDays,
-  cameraOff: lucideIcons.CameraOff,
-  cast2: lucideIcons.Cast,
-  check: lucideIcons.Check,
-  checkSquare: lucideIcons.CheckSquare,
-  chevronFirst: lucideIcons.ChevronFirst,
-  chevronLast: lucideIcons.ChevronLast,
-  chevronsLeft: lucideIcons.ChevronsLeft,
-  chevronsRight: lucideIcons.ChevronsRight,
-  chevronsUpDown: lucideIcons.ChevronsUpDown,
-  circle: lucideIcons.Circle,
-  clipboard: lucideIcons.Clipboard,
-  clock2: lucideIcons.Clock,
-  cloud: lucideIcons.Cloud,
-  cloudDrizzle: lucideIcons.CloudDrizzle,
-  cloudLightning: lucideIcons.CloudLightning,
-  cloudOff: lucideIcons.CloudOff,
-  cloudRain: lucideIcons.CloudRain,
-  cloudSnow: lucideIcons.CloudSnow,
-  code2: lucideIcons.Code2,
-  codepen: lucideIcons.Codepen,
-  codesandbox: lucideIcons.Codesandbox,
-  coffee: lucideIcons.Coffee,
-  command: lucideIcons.Command,
-  compass: lucideIcons.Compass,
-  copy2: lucideIcons.Copy,
-  cornerDownLeft: lucideIcons.CornerDownLeft,
-  cornerDownRight: lucideIcons.CornerDownRight,
-  cornerLeftDown: lucideIcons.CornerLeftDown,
-  cornerLeftUp: lucideIcons.CornerLeftUp,
-  cornerRightDown: lucideIcons.CornerRightDown,
-  cornerRightUp: lucideIcons.CornerRightUp,
-  cornerUpLeft: lucideIcons.CornerUpLeft,
-  cornerUpRight: lucideIcons.CornerUpRight,
-  cpu2: lucideIcons.Cpu,
-  creditCard2: lucideIcons.CreditCard,
-  crop: lucideIcons.Crop,
-  crosshair: lucideIcons.Crosshair,
-  delete: lucideIcons.Trash2,
-  disc: lucideIcons.Disc,
-  divide: lucideIcons.Divide,
-  dollarSign2: lucideIcons.DollarSign,
-  download2: lucideIcons.Download,
-  droplet: lucideIcons.Droplet,
-  edit2: lucideIcons.Edit,
-  equal: lucideIcons.Equal,
-  equalNot: lucideIcons.EqualNot,
-  eraser: lucideIcons.Eraser,
-  expand: lucideIcons.Expand,
-  facebook: lucideIcons.Facebook,
-  fastForward: lucideIcons.FastForward,
-  feather: lucideIcons.Feather,
-  figma: lucideIcons.Figma,
-  fileArchive: lucideIcons.FileArchive,
-  fileAudio: lucideIcons.FileAudio,
-  fileCode: lucideIcons.FileCode,
-  fileImage: lucideIcons.FileImage,
-  fileVideo: lucideIcons.FileVideo,
-  film: lucideIcons.Film,
-  filter2: lucideIcons.Filter,
-  flag: lucideIcons.Flag,
-  folder2: lucideIcons.Folder,
-  folderMinus2: lucideIcons.FolderMinus,
-  folderPlus2: lucideIcons.FolderPlus,
-  framer: lucideIcons.Framer,
-  frown: lucideIcons.Frown,
-  gift: lucideIcons.Gift,
-  gitBranch: lucideIcons.GitBranch,
-  gitCommit: lucideIcons.GitCommit,
-  gitMerge: lucideIcons.GitMerge,
-  gitPullRequest: lucideIcons.GitPullRequest,
-  github2: lucideIcons.GitHub,
-  gitlab: lucideIcons.Gitlab,
-  globe: lucideIcons.Globe,
-  grid2: lucideIcons.Grid,
-  hardDrive2: lucideIcons.HardDrive,
-  hash: lucideIcons.Hash,
-  headphones2: lucideIcons.Headphones,
-  heart2: lucideIcons.Heart,
-  helpCircle2: lucideIcons.HelpCircle,
-  hexagon: lucideIcons.Hexagon,
-  home2: lucideIcons.Home,
-  image2: lucideIcons.Image,
-  inbox2: lucideIcons.Inbox,
-  indent: lucideIcons.Indent,
-  info2: lucideIcons.Info,
-  instagram: lucideIcons.Instagram,
-  italic: lucideIcons.Italic,
-  key: lucideIcons.Key,
-  layers: lucideIcons.Layers,
-  layout2: lucideIcons.Layout,
-  lifeBuoy: lucideIcons.LifeBuoy,
-  link2: lucideIcons.Link,
-  linkedin2: lucideIcons.Linkedin,
-  list2: lucideIcons.List,
-  loader2: lucideIcons.Loader2,
-  lock2: lucideIcons.Lock,
-  mail2: lucideIcons.Mail,
-  mapPin: lucideIcons.MapPin,
-  map: lucideIcons.Map,
-  maximize2: lucideIcons.Maximize2,
-  meh: lucideIcons.Meh,
-  menu2: lucideIcons.Menu,
-  messageCircle: lucideIcons.MessageCircle,
-  messageSquare2: lucideIcons.MessageSquare,
-  mic2: lucideIcons.Mic,
-  micOff2: lucideIcons.MicOff,
-  minimize2: lucideIcons.Minimize2,
-  minus2: lucideIcons.Minus,
-  minusCircle: lucideIcons.MinusCircle,
-  minusSquare: lucideIcons.MinusSquare,
-  monitor2: lucideIcons.Monitor,
-  moon2: lucideIcons.Moon,
-  moreHorizontal2: lucideIcons.MoreHorizontal,
-  moreVertical2: lucideIcons.MoreVertical,
-  mousePointer: lucideIcons.MousePointer,
-  move: lucideIcons.Move,
-  music2: lucideIcons.Music,
-  navigation: lucideIcons.Navigation,
-  navigation2: lucideIcons.Navigation2,
-  octagon: lucideIcons.Octagon,
-  package2: lucideIcons.Package,
-  paperclip2: lucideIcons.Paperclip,
-  pause: lucideIcons.Pause,
-  pauseCircle: lucideIcons.PauseCircle,
-  penTool: lucideIcons.PenTool,
-  percent: lucideIcons.Percent,
-  phone: lucideIcons.Phone,
-  phoneCall: lucideIcons.PhoneCall,
-  phoneForwarded: lucideIcons.PhoneForwarded,
-  phoneIncoming: lucideIcons.PhoneIncoming,
-  phoneMissed: lucideIcons.PhoneMissed,
-  phoneOff: lucideIcons.PhoneOff,
-  phoneOutgoing: lucideIcons.PhoneOutgoing,
-  pieChart: lucideIcons.PieChart,
-  play: lucideIcons.Play,
-  playCircle: lucideIcons.PlayCircle,
-  plus2: lucideIcons.Plus,
-  plusCircle: lucideIcons.PlusCircle,
-  plusSquare: lucideIcons.PlusSquare,
-  pocket: lucideIcons.Pocket,
-  power: lucideIcons.Power,
-  printer2: lucideIcons.Printer,
-  radio: lucideIcons.Radio,
-  refreshCw2: lucideIcons.RefreshCw,
-  repeat: lucideIcons.Repeat,
-  rewind: lucideIcons.Rewind,
-  rotateCcw2: lucideIcons.RotateCcw,
-  rotateCw2: lucideIcons.RotateCw,
-  rss: lucideIcons.Rss,
-  save: lucideIcons.Save,
-  scissors: lucideIcons.Scissors,
-  search2: lucideIcons.Search,
-  send2: lucideIcons.Send,
-  server2: lucideIcons.Server,
-  settings2: lucideIcons.Settings,
-  share2: lucideIcons.Share2,
-  shield: lucideIcons.Shield,
-  shieldOff: lucideIcons.ShieldOff,
-  shoppingBag: lucideIcons.ShoppingBag,
-  shoppingCart: lucideIcons.ShoppingCart,
-  shuffle: lucideIcons.Shuffle,
-  sidebar: lucideIcons.Sidebar,
-  skipBack: lucideIcons.SkipBack,
-  skipForward: lucideIcons.SkipForward,
-  slack: lucideIcons.Slack,
-  slash: lucideIcons.Slash,
-  sliders: lucideIcons.Sliders,
-  smartphone2: lucideIcons.Smartphone,
-  smile: lucideIcons.Smile,
-  speaker: lucideIcons.Speaker,
-  square: lucideIcons.Square,
-  star2: lucideIcons.Star,
-  stopCircle: lucideIcons.StopCircle,
-  sun2: lucideIcons.Sun,
-  sunrise: lucideIcons.Sunrise,
-  sunset: lucideIcons.Sunset,
-  tablet2: lucideIcons.Tablet,
-  tag: lucideIcons.Tag,
-  target: lucideIcons.Target,
-  terminal2: lucideIcons.Terminal,
-  thermometer: lucideIcons.Thermometer,
-  thumbsDown: lucideIcons.ThumbsDown,
-  thumbsUp2: lucideIcons.ThumbsUp,
-  toggleLeft: lucideIcons.ToggleLeft,
-  toggleRight: lucideIcons.ToggleRight,
-  tool2: lucideIcons.Tool,
-  trash2: lucideIcons.Trash2,
-  trello: lucideIcons.Trello,
-  trendingDown: lucideIcons.TrendingDown,
-  trendingUp: lucideIcons.TrendingUp,
-  triangle: lucideIcons.Triangle,
-  truck: lucideIcons.Truck,
-  tv2: lucideIcons.Tv,
-  twitch: lucideIcons.Twitch,
-  twitter2: lucideIcons.Twitter,
-  type: lucideIcons.Type,
-  umbrella: lucideIcons.Umbrella,
-  underline: lucideIcons.Underline,
-  unlock2: lucideIcons.Unlock,
-  upload2: lucideIcons.Upload,
-  user2: lucideIcons.User,
-  userCheck: lucideIcons.UserCheck,
-  userMinus: lucideIcons.UserMinus,
-  userPlus: lucideIcons.UserPlus,
-  userX: lucideIcons.UserX,
-  users2: lucideIcons.Users,
-  video2: lucideIcons.Video,
-  videoOff: lucideIcons.VideoOff,
-  voicemail: lucideIcons.Voicemail,
-  volumeX2: lucideIcons.VolumeX,
-  volume2: lucideIcons.Volume2,
-  watch2: lucideIcons.Watch,
-  wifi: lucideIcons.Wifi,
-  wifiOff: lucideIcons.WifiOff,
-  wind: lucideIcons.Wind,
-  x2: lucideIcons.X,
-  xCircle2: lucideIcons.XCircle,
-  xOctagon: lucideIcons.XOctagon,
-  youtube: lucideIcons.Youtube,
-  zap2: lucideIcons.Zap,
-  zoomIn: lucideIcons.ZoomIn,
-  zoomOut: lucideIcons.ZoomOut,
+  // This is needed for the Proxy to work with TypeScript
+  getOwnPropertyDescriptor() {
+    return {
+      value: true,
+      enumerable: true,
+      configurable: true
+    };
+  }
+});
+
+// React component for easier usage in JSX
+type IconProps = LucideProps & {
+  name: string;
+};
+
+export const IconByName: React.FC<IconProps> = ({ name, ...props }) => {
+  const IconComponent = getIcon(name);
+  return <IconComponent {...props} />;
 };
 
 export default Icons;
