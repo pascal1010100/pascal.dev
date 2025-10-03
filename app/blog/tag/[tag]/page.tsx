@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import { blogPosts } from '@/data/blog';
 import { BlogCard } from '@/components/blog/BlogCard';
 import { Pagination } from '@/components/blog/Pagination';
@@ -65,7 +64,6 @@ export default async function TagPage({ params, searchParams }: Props) {
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
-            basePath={`/blog/tag/${encodeURIComponent(decodedTag)}`}
           />
         </div>
       )}
