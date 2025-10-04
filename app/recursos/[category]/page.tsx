@@ -4,17 +4,8 @@ import { Suspense } from 'react';
 import { Skeleton } from '../../../components/ui/skeleton';
 import CategoryClient from './CategoryClient';
 
-// Tipos
-export type Resource = {
-  id: string;
-  title: string;
-  description: string;
-  url: string;
-  tags: string[];
-  featured?: boolean;
-  icon?: string;
-  category?: string;
-};
+// Types
+import { Resource } from '@/types/resource';
 
 type Category = {
   name: string;

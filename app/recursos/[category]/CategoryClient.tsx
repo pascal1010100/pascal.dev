@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Resource } from './page';
+import { Resource } from '@/types/resource';
 
 interface CategoryClientProps {
   params: { category: string };
