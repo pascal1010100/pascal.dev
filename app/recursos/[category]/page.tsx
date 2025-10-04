@@ -1,15 +1,11 @@
 import { Metadata } from 'next';
-import { notFound, useRouter, useSearchParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
-import Link from 'next/link';
 import { Skeleton } from '../../../components/ui/skeleton';
-import { ResourceCard } from '../../../components/recursos/ResourceCard';
-import { ResourceFilters } from '../../../components/recursos/ResourceFilters';
-import { ResourcePagination } from '../../../components/recursos/ResourcePagination';
-import { ResourceEmptyState } from '../../../components/recursos/ResourceEmptyState';
+import CategoryClient from './CategoryClient';
 
 // Tipos
-type Resource = {
+export type Resource = {
   id: string;
   title: string;
   description: string;
@@ -139,20 +135,20 @@ export default function ResourceCategoryPage({ params, searchParams }: PageProps
   const page = parseInt(searchParams.page as string) || 1;
   const perPage = 12;
 
-  // Filtrar recursos
   let filteredResources = category.resources.filter(resource => {
     const matchesSearch = !search || 
       resource.title.toLowerCase().includes(search.toLowerCase()) ||
       resource.description.toLowerCase().includes(search.toLowerCase());
     
-    const matchesTag = !tag || resource.tags.includes(tag);
+    const matchesTag = !tag || (resource.tags && resource.tags.includes(tag));
     
     return matchesSearch && matchesTag;
   });
 
   // Paginación
-  const totalPages = Math.ceil(filteredResources.length / perPage);
-  const startIndex = (page - 1) * perPage;
+  const totalPages = Math.max(1, Math.ceil(filteredResources.length / perPage));
+  const currentPage = Math.min(Math.max(1, page), totalPages);
+  const startIndex = (currentPage - 1) * perPage;
   const paginatedResources = filteredResources.slice(startIndex, startIndex + perPage);
 
   // Obtener todas las etiquetas únicas de la categoría
@@ -172,128 +168,17 @@ export default function ResourceCategoryPage({ params, searchParams }: PageProps
       </header>
 
       <Suspense fallback={<CategorySkeleton />}>
-        <div className="space-y-8">
-          <div className="flex flex-col space-y-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Buscar recursos..."
-                className="w-full px-4 py-2 border rounded-md"
-                defaultValue={search}
-                onChange={(e) => {
-                  const newParams = new URLSearchParams(searchParams as any);
-                  newParams.set('search', e.target.value);
-                  window.location.href = `/recursos/${params.category}?${newParams.toString()}`;
-                }}
-              />
-            </div>
-            {allTags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {allTags.map((tagItem) => (
-                  <button
-                    key={tagItem}
-                    className={`px-3 py-1 text-sm rounded-full ${
-                      tag === tagItem
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-muted hover:bg-muted/80'
-                    }`}
-                    onClick={() => {
-                      const newParams = new URLSearchParams(searchParams as any);
-                      newParams.set('tag', tagItem);
-                      window.location.href = `/recursos/${params.category}?${newParams.toString()}`;
-                    }}
-                  >
-                    {tagItem}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-          
-          {paginatedResources.length > 0 ? (
-            <>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {paginatedResources.map((resource) => (
-                  <div key={resource.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <h3 className="font-semibold text-lg mb-2">
-                      <a 
-                        href={resource.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="hover:underline flex items-center gap-1"
-                      >
-                        {resource.title}
-                        <span className="text-muted-foreground text-sm">↗</span>
-                      </a>
-                    </h3>
-                    <p className="text-muted-foreground text-sm mb-3">{resource.description}</p>
-                    {resource.tags && resource.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {resource.tags.map((tag) => (
-                          <span 
-                            key={tag} 
-                            className="text-xs bg-muted px-2 py-1 rounded-full"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {totalPages > 1 && (
-                <div className="flex justify-center gap-2 mt-8">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
-                  const newParams = new URLSearchParams();
-                  // Copiar los parámetros existentes
-                  Object.entries(searchParams).forEach(([key, value]) => {
-                    if (Array.isArray(value)) {
-                      value.forEach(v => newParams.append(key, v));
-                    } else if (value !== undefined) {
-                      newParams.set(key, value);
-                    }
-                  });
-                  // Actualizar el parámetro de página
-                  newParams.set('page', pageNum.toString());
-                  
-                  return (
-                    <Link
-                      key={pageNum}
-                      href={`/recursos/${params.category}?${newParams.toString()}`}
-                      className={`px-3 py-1 rounded ${
-                        page === pageNum
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted hover:bg-muted/80'
-                      }`}
-                    >
-                      {pageNum}
-                    </Link>
-                  );
-                })}
-              </div>
-              )}
-            </>
-          ) : (
-            <div className="text-center py-12">
-              <h3 className="text-lg font-medium mb-2">No se encontraron recursos</h3>
-              <p className="mb-4">
-                {search || tag ? (
-                  `No hay resultados para "${search || tag}". Intenta con otros términos de búsqueda.`
-                ) : (
-                  'No hay recursos disponibles en esta categoría en este momento.'
-                )}
-              </p>
-              <a 
-                href={`/recursos/${params.category}`}
-                className="text-primary hover:underline"
-              >
-                Limpiar filtros
-              </a>
-            </div>
-          )}
-        </div>
+        <CategoryClient 
+          params={params}
+          searchParams={searchParams}
+          category={category}
+          allTags={allTags}
+          paginatedResources={paginatedResources}
+          totalPages={totalPages}
+          page={currentPage}
+          search={search}
+          tag={tag}
+        />
       </Suspense>
     </div>
   );
