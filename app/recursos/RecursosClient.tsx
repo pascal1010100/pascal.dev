@@ -65,21 +65,8 @@ export default function RecursosClient({ resources }: RecursosClientProps) {
   // Get category from URL or default to all
   const selectedCategory = searchParams?.get('categoria') as Category | null;
 
-  // Get all unique tags from all resources
-  const allTags = useMemo(() => {
-    const tags = new Set<string>();
-    resources.forEach((resource) => {
-      resource.tags?.forEach(tag => tags.add(tag));
-    });
-    return Array.from(tags).sort();
-  }, [resources]);
-
-  // Get all unique categories
-  const allCategories = useMemo(() => {
-    const categories = new Set<Category>();
-    resources.forEach((resource) => categories.add(resource.category));
-    return Array.from(categories);
-  }, [resources]);
+  // Removed unused variables to fix ESLint errors
+  // allTags and allCategories were calculated but not used
 
   // Filter and sort resources
   const filteredResources = useMemo(() => {
