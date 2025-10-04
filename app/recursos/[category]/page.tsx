@@ -1,10 +1,8 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
-import { Badge } from '../../../components/ui/badge';
-import { Icons } from '../../../components/icons';
 import { Suspense } from 'react';
 import { Skeleton } from '../../../components/ui/skeleton';
 import { ResourceCard } from '../../../components/recursos/ResourceCard';
@@ -20,14 +18,14 @@ type Resource = {
   url: string;
   tags: string[];
   featured?: boolean;
-  icon?: keyof typeof Icons;
+  icon?: string;
   category?: string;
 };
 
 type Category = {
   name: string;
   description: string;
-  icon: keyof typeof Icons;
+  icon: string;
   color: string;
   resources: Resource[];
   tags?: string[];
@@ -38,111 +36,30 @@ const categories: Record<string, Category> = {
   herramientas: {
     name: 'Herramientas',
     description: 'Las mejores herramientas para desarrollo web y productividad',
-    icon: 'tool',
-    color: 'bg-blue-500/10 text-blue-500',
-    tags: ['editor', 'ide', 'productividad', 'desarrollo', 'herramientas'],
+    icon: 'wrench',
+    color: 'blue',
     resources: [
       {
-        id: 'vscode',
-        title: 'Visual Studio Code',
-        description: 'Editor de código fuente desarrollado por Microsoft con soporte para depuración, control de versiones Git integrado, resaltado de sintaxis, finalización de código inteligente, fragmentos y más.',
-        url: 'https://code.visualstudio.com/',
-        tags: ['editor', 'desarrollo', 'gratis', 'productividad', 'microsoft'],
-        featured: true,
-        icon: 'code',
-        category: 'herramientas'
+        id: '1',
+        title: 'Herramienta 1',
+        description: 'Descripción de la herramienta 1',
+        url: '#',
+        tags: ['frontend', 'productividad'],
+        featured: true
       },
-      {
-        id: 'github',
-        title: 'GitHub',
-        description: 'Plataforma de desarrollo colaborativo para alojar proyectos utilizando el sistema de control de versiones Git.',
-        url: 'https://github.com/',
-        tags: ['control de versiones', 'colaboración', 'git', 'open source'],
-        featured: true,
-        icon: 'github',
-        category: 'herramientas'
-      },
-      {
-        id: 'figma',
-        title: 'Figma',
-        description: 'Herramienta de diseño de interfaces de usuario y prototipado colaborativo basada en la web.',
-        url: 'https://www.figma.com/',
-        tags: ['diseño', 'ui/ux', 'prototipado', 'colaboración'],
-        featured: true,
-        icon: 'figma',
-        category: 'herramientas'
-      },
-      {
-        id: 'postman',
-        title: 'Postman',
-        description: 'Plataforma de colaboración para el desarrollo de APIs que simplifica cada paso del ciclo de vida de las APIs.',
-        url: 'https://www.postman.com/',
-        tags: ['api', 'desarrollo', 'testing', 'documentación'],
-        featured: false,
-        icon: 'code',
-        category: 'herramientas'
-      },
-      {
-        id: 'docker',
-        title: 'Docker',
-        description: 'Plataforma abierta para desarrollar, enviar y ejecutar aplicaciones en contenedores.',
-        url: 'https://www.docker.com/',
-        tags: ['contenedores', 'devops', 'despliegue', 'infraestructura'],
-        featured: true,
-        icon: 'box',
-        category: 'herramientas'
-      },
+      // Agrega más recursos aquí
     ]
   },
-  librerias: {
-    name: 'Librerías',
-    description: 'Librerías y paquetes para potenciar tus proyectos',
-    icon: 'library',
-    color: 'bg-purple-500/10 text-purple-500',
-    tags: ['frontend', 'backend', 'frameworks', 'utilidades'],
-    resources: [
-      {
-        id: 'react',
-        title: 'React',
-        description: 'Biblioteca de JavaScript para construir interfaces de usuario.',
-        url: 'https://reactjs.org/',
-        tags: ['frontend', 'javascript', 'ui', 'facebook'],
-        featured: true,
-        icon: 'react',
-        category: 'librerias'
-      },
-      {
-        id: 'tailwind',
-        title: 'Tailwind CSS',
-        description: 'Framework CSS de utilidad primero que permite diseñar interfaces de usuario directamente en el marcado.',
-        url: 'https://tailwindcss.com/',
-        tags: ['css', 'framework', 'diseño', 'frontend'],
-        featured: true,
-        icon: 'layout',
-        category: 'librerias'
-      },
-      {
-        id: 'nextjs',
-        title: 'Next.js',
-        description: 'El marco de React para la producción - estático y generado por servidor, enrutamiento del sistema de archivos, etc.',
-        url: 'https://nextjs.org/',
-        tags: ['react', 'ssr', 'ssg', 'framework'],
-        featured: true,
-        icon: 'nextjs',
-        category: 'librerias'
-      }
-    ]
-  },
-  // Agrega más categorías según sea necesario
+  // Agrega más categorías aquí
 };
 
 // Tipos para los parámetros y props
 type CategoryKey = keyof typeof categories;
 
-type PageProps = {
+interface PageProps {
   params: { category: string };
   searchParams: { [key: string]: string | string[] | undefined };
-};
+}
 
 // Función para generar metadatos dinámicos
 export async function generateMetadata({
@@ -150,28 +67,27 @@ export async function generateMetadata({
 }: {
   params: { category: string };
 }): Promise<Metadata> {
-  const categoryData = categories[params.category as CategoryKey];
+  const category = categories[params.category as CategoryKey];
   
-  if (!categoryData) {
+  if (!category) {
     return {
-      title: 'Categoría no encontrada | Recursos para Desarrolladores',
-      description: 'La categoría solicitada no existe en nuestra colección de recursos.',
+      title: 'Categoría no encontrada',
+      description: 'La categoría solicitada no existe.',
     };
   }
-  
+
   return {
-    title: `${categoryData.name} | Recursos para Desarrolladores | Pascal Dev`,
-    description: categoryData.description,
+    title: `${category.name} | Recursos para Desarrolladores`,
+    description: category.description,
     openGraph: {
-      title: `${categoryData.name} | Recursos para Desarrolladores`,
-      description: categoryData.description,
+      title: `${category.name} | Recursos para Desarrolladores`,
+      description: category.description,
       type: 'website',
-      locale: 'es_ES',
-      siteName: 'Pascal Dev',
     },
     twitter: {
       card: 'summary_large_image',
-      description: categoryData.description,
+      title: `${category.name} | Recursos para Desarrolladores`,
+      description: category.description,
     },
   };
 }
@@ -179,39 +95,29 @@ export async function generateMetadata({
 // Componente de carga esquelética para la categoría
 function CategorySkeleton() {
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-        <div className="flex items-center gap-4">
-          <Skeleton className="h-12 w-12 rounded-lg" />
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-4 w-64" />
-          </div>
-        </div>
-        <Skeleton className="h-10 w-full sm:w-64" />
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <Skeleton className="h-10 w-64 mx-auto" />
+        <Skeleton className="h-4 w-96 mx-auto" />
       </div>
       
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {[...Array(6)].map((_, i) => (
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {[1, 2, 3, 4, 5, 6].map((i) => (
           <Card key={i} className="overflow-hidden">
-            <CardHeader className="space-y-2">
-              <div className="flex justify-between items-start">
-                <Skeleton className="h-6 w-3/4" />
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-6 w-24" />
                 <Skeleton className="h-5 w-16" />
               </div>
+              <Skeleton className="h-6 w-48 mt-2" />
+              <Skeleton className="h-4 w-full mt-2" />
+              <Skeleton className="h-4 w-3/4 mt-1" />
             </CardHeader>
-            <CardContent className="space-y-3">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-5/6" />
-              <Skeleton className="h-4 w-4/5" />
-              
-              <div className="flex flex-wrap gap-2 mt-4">
-                <Skeleton className="h-5 w-12 rounded-full" />
-                <Skeleton className="h-5 w-16 rounded-full" />
-                <Skeleton className="h-5 w-14 rounded-full" />
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                <Skeleton className="h-6 w-16" />
+                <Skeleton className="h-6 w-20" />
               </div>
-              
-              <Skeleton className="h-9 w-full mt-4" />
             </CardContent>
           </Card>
         ))}
@@ -221,112 +127,93 @@ function CategorySkeleton() {
 }
 
 // Página de categoría de recursos
-export default async function ResourceCategoryPage({ params, searchParams }: PageProps) {
-  const category = params.category as CategoryKey;
-  const searchQuery = typeof searchParams.q === 'string' ? searchParams.q : '';
-  const page = typeof searchParams.page === 'string' ? parseInt(searchParams.page, 10) || 1 : 1;
+export default function ResourceCategoryPage({ params, searchParams }: PageProps) {
+  const category = categories[params.category as CategoryKey];
   
-  const categoryData = categories[category];
-  
-  if (!categoryData) {
+  // Si la categoría no existe, mostramos un 404
+  if (!category) {
     notFound();
   }
-  
-  const Icon = Icons[categoryData.icon as keyof typeof Icons] || Icons.package;
-  
-  // Filtrar recursos según la búsqueda
-  const filteredResources = categoryData.resources.filter(resource => {
-    if (!searchQuery) return true;
+
+  // Procesar parámetros de búsqueda y filtros
+  const search = searchParams.search as string || '';
+  const tag = searchParams.tag as string || '';
+  const page = parseInt(searchParams.page as string) || 1;
+  const perPage = 12;
+
+  // Filtrar recursos
+  let filteredResources = category.resources.filter(resource => {
+    const matchesSearch = !search || 
+      resource.title.toLowerCase().includes(search.toLowerCase()) ||
+      resource.description.toLowerCase().includes(search.toLowerCase());
     
-    const query = searchQuery.toLowerCase();
-    return (
-      resource.title.toLowerCase().includes(query) ||
-      resource.description.toLowerCase().includes(query) ||
-      resource.tags.some(tag => tag.toLowerCase().includes(query))
-    );
+    const matchesTag = !tag || resource.tags.includes(tag);
+    
+    return matchesSearch && matchesTag;
   });
-  
+
   // Paginación
-  const itemsPerPage = 9;
-  const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
-  const currentPage = Math.min(Math.max(1, page), totalPages);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedResources = filteredResources.slice(startIndex, startIndex + itemsPerPage);
+  const totalPages = Math.ceil(filteredResources.length / perPage);
+  const startIndex = (page - 1) * perPage;
+  const paginatedResources = filteredResources.slice(startIndex, startIndex + perPage);
+
+  // Obtener todas las etiquetas únicas de la categoría
+  const allTags = Array.from(
+    new Set(category.resources.flatMap(resource => resource.tags || []))
+  ).sort();
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <header className="mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div className="flex items-center gap-4">
-            <div className={`p-3 rounded-lg ${categoryData.color} w-12 h-12 flex items-center justify-center`}>
-              <Icon className="h-6 w-6" />
-            </div>
-            <div>
-              <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-                {categoryData.name}
-              </h1>
-              <p className="text-muted-foreground">
-                {categoryData.description}
-              </p>
-            </div>
-          </div>
-          
-          <div className="w-full sm:w-64">
-            <ResourceFilters 
-              categories={[
-                {
-                  id: category,
-                  name: categoryData.name,
-                  count: categoryData.resources.length,
-                  icon: categoryData.icon as keyof typeof Icons
-                }
-              ]} 
-              selectedCategory={category}
-              searchQuery={searchQuery}
-            />
-          </div>
-        </div>
+      <header className="mb-8 text-center">
+        <h1 className="text-3xl font-bold tracking-tight mb-2">
+          {category.name}
+        </h1>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
+          {category.description}
+        </p>
       </header>
-      
+
       <Suspense fallback={<CategorySkeleton />}>
-        {paginatedResources.length === 0 ? (
-          <ResourceEmptyState 
-            title="No se encontraron recursos"
-            description={searchQuery 
-              ? `No hay recursos en ${categoryData.name.toLowerCase()} que coincidan con "${searchQuery}". Intenta con otros términos de búsqueda.`
-              : `Actualmente no hay recursos disponibles en la categoría ${categoryData.name.toLowerCase()}.`}
-            actionText="Ver todos los recursos"
-            actionHref="/recursos"
-            icon="search"
+        <div className="space-y-8">
+          <ResourceFilters 
+            search={search}
+            tags={allTags}
+            selectedTag={tag}
           />
-        ) : (
-          <>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {paginatedResources.map((resource) => (
-                <ResourceCard key={resource.id} {...resource} />
-              ))}
-            </div>
-            
-            {totalPages > 1 && (
-              <div className="mt-8">
-                <ResourcePagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  totalItems={filteredResources.length}
-                  pageSize={itemsPerPage}
-                />
+          
+          {paginatedResources.length > 0 ? (
+            <>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {paginatedResources.map((resource) => (
+                  <ResourceCard
+                    key={resource.id}
+                    title={resource.title}
+                    description={resource.description}
+                    url={resource.url}
+                    tags={resource.tags}
+                    featured={resource.featured}
+                    icon={resource.icon}
+                    category={resource.category}
+                  />
+                ))}
               </div>
-            )}
-          </>
-        )}
-        
-        <div className="mt-12 pt-8 border-t border-border">
-          <Button asChild variant="ghost">
-            <Link href="/recursos" className="group">
-              <Icons.arrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-              Volver a todos los recursos
-            </Link>
-          </Button>
+
+              {totalPages > 1 && (
+                <ResourcePagination
+                  currentPage={page}
+                  totalPages={totalPages}
+                  basePath={`/recursos/${params.category}`}
+                  searchParams={searchParams}
+                />
+              )}
+            </>
+          ) : (
+            <ResourceEmptyState 
+              search={search}
+              tag={tag}
+              resetPath={`/recursos/${params.category}`}
+            />
+          )}
         </div>
       </Suspense>
     </div>

@@ -2,6 +2,35 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import RecursosClient from "./RecursosClient";
 
+// Tipos
+type Category = 'herramientas' | 'librerias' | 'tutoriales' | 'guias' | 'plantillas';
+
+interface Resource {
+  id: string;
+  title: string;
+  description: string;
+  url: string;
+  category: Category;
+  tags: string[];
+  featured?: boolean;
+  createdAt?: string;
+}
+
+// Datos de ejemplo - reemplazar con tu fuente de datos real
+const resources: Resource[] = [
+  {
+    id: '1',
+    title: 'Recurso de Ejemplo',
+    description: 'Descripción del recurso de ejemplo',
+    url: '#',
+    category: 'herramientas',
+    tags: ['frontend', 'productividad'],
+    featured: true,
+    createdAt: '2023-01-01'
+  },
+  // Agrega más recursos aquí
+];
+
 export const metadata: Metadata = {
   title: "Recursos para Desarrolladores | Pascal Dev",
   description: "Colección de recursos útiles para desarrolladores: herramientas, librerías, tutoriales y más.",
@@ -64,7 +93,7 @@ export default function RecursosPage() {
   return (
     <main className="min-h-screen bg-background">
       <Suspense fallback={<RecursosSkeleton />}>
-        <RecursosClient />
+        <RecursosClient resources={resources} />
       </Suspense>
     </main>
   );
