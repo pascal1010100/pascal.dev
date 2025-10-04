@@ -126,7 +126,7 @@ export default function ResourceCategoryPage({ params, searchParams }: PageProps
   const page = parseInt(searchParams.page as string) || 1;
   const perPage = 12;
 
-  let filteredResources = category.resources.filter(resource => {
+  const filteredResources = category.resources.filter(resource => {
     const matchesSearch = !search || 
       resource.title.toLowerCase().includes(search.toLowerCase()) ||
       resource.description.toLowerCase().includes(search.toLowerCase());

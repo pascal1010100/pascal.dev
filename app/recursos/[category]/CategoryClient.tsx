@@ -23,7 +23,7 @@ interface CategoryClientProps {
 export default function CategoryClient({
   params,
   searchParams,
-  category,
+  category: categoryData,
   allTags,
   paginatedResources,
   totalPages,
